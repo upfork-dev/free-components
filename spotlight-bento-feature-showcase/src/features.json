@@ -1,0 +1,53 @@
+{
+  "name": "Editor features",
+  "features": [
+    {
+      "id": "snapping-timeline",
+      "title": "Snapping timeline",
+      "description": "Clips snap into place and close their own gaps, so the edit stays tidy while you move fast.",
+      "short": "Clips snap into place and gaps close themselves as you edit.",
+      "accent": "#34d399",
+      "category": "Editing",
+      "icon": "<svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M2 4.5h5M9 4.5h5M2 8h8M12 8h2M2 11.5h3M7 11.5h7\"/></svg>",
+      "image": "images/snapping-timeline.jpg",
+      "alt": "An editor in headphones working at a desk lit by two monitors in a dark room",
+      "href": "#snapping-timeline"
+    },
+    {
+      "id": "ripple-trim",
+      "title": "Ripple trim",
+      "description": "Trim one clip and everything after it moves with it, keeping sound and picture in sync.",
+      "short": "Trim one clip and everything after it moves with it, in sync.",
+      "accent": "#818cf8",
+      "category": "Trimming",
+      "icon": "<svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 3v10M10 3v10M3 6l-1.5 2L3 10M13 6l1.5 2L13 10\"/></svg>",
+      "image": "images/ripple-trim.jpg",
+      "alt": "Close-up of a video editing timeline with blue and purple clips",
+      "href": "#ripple-trim"
+    },
+    {
+      "id": "realtime-scopes",
+      "title": "Realtime scopes",
+      "description": "Waveform, vectorscope and histogram update with every adjustment, so you grade by eye and by numbers.",
+      "short": "Waveform, vectorscope and histogram update with every grade.",
+      "accent": "#c084fc",
+      "category": "Color",
+      "icon": "<svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"8\" r=\"6\"/><path d=\"M2.5 9.5c1.5-3 2.5 2 4-1s2.5 2 4-1 2 1 3 0\"/></svg>",
+      "image": "images/realtime-scopes.jpg",
+      "alt": "Color grading wheels glowing on a dark editing screen",
+      "href": "#realtime-scopes"
+    },
+    {
+      "id": "transcript-editing",
+      "title": "Transcript editing",
+      "description": "Delete a sentence from the transcript and the cut follows. Edit an interview the way you edit a document.",
+      "short": "Delete a sentence in the transcript and the cut follows.",
+      "accent": "#fbbf24",
+      "category": "AI",
+      "icon": "<svg viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M2.5 4h11M2.5 7h7M2.5 10h9M2.5 13h4M12 9.5v4\"/></svg>",
+      "image": "images/transcript-editing.jpg",
+      "alt": "A glowing orange and magenta sound wave on a black background",
+      "href": "#transcript-editing"
+    }
+  ]
+}

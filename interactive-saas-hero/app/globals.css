@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Dark mode follows a `dark` class on <html>, which the demo's theme switch sets (the system setting by
+   default). The hero's theme="auto" follows the same class. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}

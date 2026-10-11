@@ -1,0 +1,123 @@
+    <!-- ================= Pulse Bento Feature Highlights ================= -->
+    <section class="pbf py-24 lg:py-32" data-pbf aria-labelledby="{{ID}}"{{CONFIG_ATTR}}>
+      <div class="pbf-backdrop" aria-hidden="true"></div>
+      <div class="mx-auto max-w-6xl px-5 sm:px-6">
+        <header class="text-center" data-pbf-reveal>
+          <span class="pbf-badge"><span class="pbf-pulse" aria-hidden="true"></span>{{icon:sparkles}}{{BADGE}}</span>
+          <h2 id="{{ID}}" class="pbf-headline">{{HEADLINE}}</h2>
+          <p class="pbf-sub">{{SUB}}</p>
+        </header>
+
+        <div class="pbf-grid" data-layout="grid">
+          <!-- 1 · Realtime KPI monitor -->
+          <article class="pbf-card" data-pbf-card="kpi" style="--tint: var(--pbf-accent-1)">
+            <span class="pbf-spot" aria-hidden="true"></span><span class="pbf-edge" aria-hidden="true"></span>
+            <div class="pbf-app">
+              <div class="pbf-bar">
+                <span class="pbf-bar-title">{{icon:activity}}<span><span class="pbf-wide">Realtime </span>KPI Monitor</span></span>
+                <span class="pbf-tools">
+                  <span class="pbf-seg" role="group" aria-label="Time range">
+                    <button type="button" aria-pressed="true" data-range="today">Today</button>
+                    <button type="button" aria-pressed="false" data-range="d7">7d</button>
+                    <button type="button" aria-pressed="false" data-range="d30">30d</button>
+                  </span>
+                  <span class="pbf-live"><span class="pbf-pulse" aria-hidden="true"></span><span>Live</span></span>
+                </span>
+              </div>
+              <div class="pbf-body flex flex-col">
+                <div class="pbf-kpi-rows" aria-live="off">
+{{KPI_ROWS}}
+                </div>
+                <p class="sr-only">{{KPI_SUMMARY}}</p>
+                <div class="pbf-kpi-foot">
+                  <span class="pbf-insight">
+                    <button type="button" class="pbf-pill" aria-expanded="false">{{icon:bot}}AI Insights</button>
+                    <span class="pbf-popover" aria-hidden="true"><span></span></span>
+                    <span class="sr-only" aria-live="polite"></span>
+                  </span>
+                  <span class="pbf-kpi-total">Total <b>{{KPI_TOTAL}}</b></span>
+                </div>
+              </div>
+            </div>
+            <h3 class="pbf-card-title">{{F0_NAME}}</h3>
+            <p class="pbf-card-desc">{{F0_DESC}}</p>
+          </article>
+
+          <!-- 2 · Worldwide clients -->
+          <article class="pbf-card" data-pbf-card="clients" style="--tint: var(--pbf-accent-2)">
+            <span class="pbf-spot" aria-hidden="true"></span><span class="pbf-edge" aria-hidden="true"></span>
+            <div class="pbf-app">
+              <div class="pbf-bar">
+                <span class="pbf-bar-title">{{icon:globe}}<span>Worldwide Clients</span></span>
+                <button type="button" class="pbf-ghost" data-pbf-cycle aria-label="Showing weekly clients. Switch view">{{icon:refresh-cw}}<span>Weekly</span></button>
+              </div>
+              <div class="pbf-body">
+{{GLOBE}}
+                <div class="pbf-marquee">
+                  <div class="pbf-track">
+                    <ul class="pbf-clients-list" aria-label="Clients, weekly">{{CLIENTS}}</ul>
+                    <ul class="pbf-clients-list" aria-hidden="true">{{CLIENTS}}</ul>
+                  </div>
+                </div>
+                <p class="pbf-clients-foot">{{icon:languages}}Multilingual + multicurrency support <span class="pbf-lang" aria-hidden="true">EN</span></p>
+              </div>
+            </div>
+            <h3 class="pbf-card-title">{{F1_NAME}}</h3>
+            <p class="pbf-card-desc">{{F1_DESC}}</p>
+          </article>
+
+          <!-- 3 · Integrations -->
+          <article class="pbf-card" data-pbf-card="integrations" style="--tint: var(--pbf-accent-3)">
+            <span class="pbf-spot" aria-hidden="true"></span><span class="pbf-edge" aria-hidden="true"></span>
+            <div class="pbf-app">
+              <div class="pbf-bar">
+                <span class="pbf-bar-title">{{icon:plug-zap}}<span>Connects with your tools</span></span>
+                <span class="pbf-chip">4 apps</span>
+              </div>
+              <div class="pbf-body">
+                <div class="pbf-tiles">
+{{TILES}}
+                </div>
+{{WIRES}}
+                <span class="pbf-hub" aria-hidden="true">{{icon:zap}}</span>
+                <div class="pbf-int-foot">
+                  <div class="pbf-log" aria-live="off"><p><b>✓</b> <span>Calendar synced · 3s ago</span></p><p><b>✓</b> <span>CRM synced · 1s ago</span></p></div>
+                  <span class="pbf-stack" data-done><span class="pbf-stack-faces">{{STACK}}<span class="pbf-synced" aria-hidden="true">{{icon:check}}</span></span><span class="pbf-stack-label">Synced across tools</span></span>
+                </div>
+              </div>
+            </div>
+            <h3 class="pbf-card-title">{{F2_NAME}}</h3>
+            <p class="pbf-card-desc">{{F2_DESC}}</p>
+          </article>
+
+          <!-- 4 · Team workspace -->
+          <article class="pbf-card" data-pbf-card="workspace" style="--tint: var(--pbf-accent-4)">
+            <span class="pbf-spot" aria-hidden="true"></span><span class="pbf-edge" aria-hidden="true"></span>
+            <div class="pbf-app">
+              <div class="pbf-bar">
+                <span class="pbf-bar-title">{{icon:users}}<span>Team Workspace</span></span>
+                <button type="button" class="pbf-btn" data-pbf-add aria-busy="false">{{icon:loader-circle:pbf-icon pbf-spinner}}{{icon:plus:pbf-icon pbf-plus}}<span>Add</span></button>
+              </div>
+              <div class="pbf-body">
+                <div class="pbf-tabs" role="tablist" aria-label="Workspace views">
+                  <span class="pbf-tab-ink" aria-hidden="true"></span>
+                  <button type="button" class="pbf-tab" role="tab" aria-selected="true">Members</button>
+                  <button type="button" class="pbf-tab" role="tab" aria-selected="false" tabindex="-1">Tasks</button>
+                  <button type="button" class="pbf-tab" role="tab" aria-selected="false" tabindex="-1">Hub</button>
+                </div>
+                <div class="pbf-panel" role="tabpanel" tabindex="0"><ul class="pbf-list pbf-members">{{MEMBERS}}</ul></div>
+                <div class="pbf-panel" role="tabpanel" hidden><ul class="pbf-list">{{TASKS}}</ul></div>
+                <div class="pbf-panel" role="tabpanel" tabindex="0" hidden><ul class="pbf-list pbf-feed">{{FEED}}</ul></div>
+                <div class="pbf-toast">{{icon:circle-check}}<span>Invitation sent</span><button type="button">Undo</button></div>
+                <span class="sr-only" role="status"></span>
+              </div>
+            </div>
+            <h3 class="pbf-card-title">{{F3_NAME}}</h3>
+            <p class="pbf-card-desc">{{F3_DESC}}</p>
+          </article>
+        </div>
+      </div>
+      <script type="application/json" data-pbf-config>
+{{CONFIG}}
+      </script>
+    </section>

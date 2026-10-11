@@ -1,0 +1,20 @@
+/* Tailwind for the section's layout and the demo page. The cards themselves use the agt-* classes in
+   agt.css, so cards rendered at runtime from JSON never depend on a utility that wasn't compiled. */
+@import "tailwindcss" source(none);
+@source "./page.html";
+
+/* Dark mode: the visitor's setting, unless <html data-theme> says otherwise. */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+  &:where([data-theme="dark"] *) {
+    @slot;
+  }
+}
+
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}

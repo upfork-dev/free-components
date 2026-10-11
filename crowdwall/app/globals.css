@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* Dark mode follows a `dark` class on <html>, which the demo's theme switch sets (the system setting
+   by default). The hero itself only uses dark: variants, so it also works with media-based dark mode. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
+  /* Photo marquee: a row's track holds its photos twice and slides by exactly one copy, so the
+     loop has no seam. Each row sets its own duration and direction inline. */
+  --animate-marquee: marquee 60s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "badge": "Feature Highlights",
+  "headline": "Feature highlights to {accelerate your sales}",
+  "subheadline": "Live pipelines, global clients, connected tools and a team that runs itself: every card below is a working demo.",
+  "layout": "grid",
+  "theme": "auto",
+  "autoplay": true,
+  "features": [
+    {
+      "name": "Real-Time Performance Tracking",
+      "description": "Watch revenue move country by country, with AI insights that explain the change as it happens."
+    },
+    {
+      "name": "Sell Globally",
+      "description": "Serve clients in their own language and currency, with every region in one live view."
+    },
+    {
+      "name": "Seamless Collaboration",
+      "description": "Email, chat, calendar and CRM stay in sync automatically, so the whole team works from one source."
+    },
+    {
+      "name": "Workflow Automation",
+      "description": "Invite teammates, assign follow-ups and let reminders and reports run on their own."
+    }
+  ],
+  "cards": {
+    "kpi": {
+      "rows": [
+        {
+          "code": "US",
+          "name": "United States",
+          "tag": "SaaS"
+        },
+        {
+          "code": "DE",
+          "name": "Germany",
+          "tag": "Fintech"
+        },
+        {
+          "code": "JP",
+          "name": "Japan",
+          "tag": "E-com"
+        },
+        {
+          "code": "BR",
+          "name": "Brazil",
+          "tag": "Retail"
+        }
+      ],
+      "datasets": {
+        "today": [
+          {
+            "value": 48200,
+            "pct": 72
+          },
+          {
+            "value": 31400,
+            "pct": 54
+          },
+          {
+            "value": 22900,
+            "pct": 41
+          },
+          {
+            "value": 17600,
+            "pct": 33
+          }
+        ],
+        "d7": [
+          {
+            "value": 286400,
+            "pct": 81
+          },
+          {
+            "value": 214800,
+            "pct": 63
+          },
+          {
+            "value": 132500,
+            "pct": 47
+          },
+          {
+            "value": 98700,
+            "pct": 36
+          }
+        ],
+        "d30": [
+          {
+            "value": 1184000,
+            "pct": 77
+          },
+          {
+            "value": 902300,
+            "pct": 66
+          },
+          {
+            "value": 671900,
+            "pct": 58
+          },
+          {
+            "value": 405200,
+            "pct": 39
+          }
+        ]
+      },
+      "insights": {
+        "today": "US pipeline up 12% WoW, driven by SaaS renewals in the Northeast.",
+        "d7": "Germany closed 4 enterprise deals this week; fintech leads at 38% of new revenue.",
+        "d30": "Japan grew fastest this month (+18%), led by e-commerce expansion in Osaka."
+      }
+    },
+    "clients": {
+      "languages": [
+        "EN",
+        "DE",
+        "JA",
+        "FR",
+        "ES",
+        "PT",
+        "AR"
+      ],
+      "weekly": [
+        {
+          "name": "Amelia Hart",
+          "avatar": "avatars/amelia.jpg",
+          "country": "GB",
+          "currency": "GBP",
+          "status": "check"
+        },
+        {
+          "name": "Lukas Weber",
+          "avatar": "avatars/lukas.jpg",
+          "country": "DE",
+          "currency": "EUR",
+          "status": "star"
+        },
+        {
+          "name": "Sakura Ito",
+          "avatar": "avatars/sakura.jpg",
+          "country": "JP",
+          "currency": "JPY",
+          "status": "check"
+        },
+        {
+          "name": "Mateo Silva",
+          "avatar": "avatars/mateo.jpg",
+          "country": "BR",
+          "currency": "BRL",
+          "status": "check"
+        },
+        {
+          "name": "Priya Nair",
+          "country": "IN",
+          "currency": "INR",
+          "status": "star"
+        },
+        {
+          "name": "Chloé Martin",
+          "avatar": "avatars/chloe.jpg",
+          "country": "FR",
+          "currency": "EUR",
+          "status": "check"
+        },
+        {
+          "name": "Ethan Brooks",
+          "avatar": "avatars/ethan.jpg",
+          "country": "US",
+          "currency": "USD",
+          "status": "check"
+        }
+      ],
+      "monthly": [
+        {
+          "name": "Olivia Grant",
+          "avatar": "avatars/olivia.jpg",
+          "country": "AU",
+          "currency": "AUD",
+          "status": "check"
+        },
+        {
+          "name": "Hana Kobayashi",
+          "avatar": "avatars/hana.jpg",
+          "country": "JP",
+          "currency": "JPY",
+          "status": "star"
+        },
+        {
+          "name": "Diego Ramos",
+          "avatar": "avatars/diego.jpg",
+          "country": "MX",
+          "currency": "MXN",
+          "status": "check"
+        },
+        {
+          "name": "Freya Nilsson",
+          "avatar": "avatars/freya.jpg",
+          "country": "SE",
+          "currency": "SEK",
+          "status": "check"
+        },
+        {
+          "name": "Arjun Mehta",
+          "avatar": "avatars/arjun.jpg",
+          "country": "IN",
+          "currency": "INR",
+          "status": "check"
+        },
+        {
+          "name": "Noor Haddad",
+          "country": "AE",
+          "currency": "AED",
+          "status": "star"
+        },
+        {
+          "name": "Grace Liu",
+          "avatar": "avatars/grace.jpg",
+          "country": "SG",
+          "currency": "SGD",
+          "status": "check"
+        }
+      ]
+    },
+    "integrations": {
+      "tiles": [
+        "Email",
+        "Chat",
+        "Calendar",
+        "CRM"
+      ]
+    },
+    "workspace": {
+      "members": [
+        {
+          "name": "Maya Okafor",
+          "avatar": "avatars/maya.jpg",
+          "role": "Head of Sales",
+          "action": "Auto-reminders",
+          "kind": "bell"
+        },
+        {
+          "name": "Daniel Reyes",
+          "avatar": "avatars/daniel.jpg",
+          "role": "Account Executive",
+          "action": "Follow-ups",
+          "kind": "clock"
+        },
+        {
+          "name": "Aiko Tanaka",
+          "avatar": "avatars/aiko.jpg",
+          "role": "RevOps Lead",
+          "action": "Reporting",
+          "kind": "chart"
+        }
+      ],
+      "invites": [
+        {
+          "name": "Noah Kim",
+          "avatar": "avatars/noah.jpg",
+          "role": "Sales Engineer",
+          "action": "Follow-ups",
+          "kind": "clock"
+        },
+        {
+          "name": "Lena Park",
+          "avatar": "avatars/lena.jpg",
+          "role": "Customer Success",
+          "action": "Auto-reminders",
+          "kind": "bell"
+        }
+      ],
+      "tasks": [
+        {
+          "label": "Send Q4 pricing to Fieldline",
+          "done": true
+        },
+        {
+          "label": "Prepare the renewal deck for Parcelry",
+          "done": false
+        },
+        {
+          "label": "Review the pipeline with RevOps",
+          "done": false
+        }
+      ],
+      "feed": [
+        {
+          "text": "Maya closed Fieldline · $24k",
+          "time": "2m"
+        },
+        {
+          "text": "Daniel booked a demo with Lumora",
+          "time": "14m"
+        },
+        {
+          "text": "Weekly report sent to 6 managers",
+          "time": "1h"
+        }
+      ]
+    }
+  }
+}

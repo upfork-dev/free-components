@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* Dark mode follows a `dark` class on <html>, which the demo's theme switch sets (the system setting by
+   default). The button's "auto" surface uses dark: variants, so media-based dark mode works too. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* The beam's position: one animated number per comet, read by every layer of it. */
+@property --bb-offset {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
+  /* Beam Button. Every name starts with bb- so nothing collides with your own CSS. */
+  --animate-bb-beam: bb-beam 3s linear infinite;
+  --animate-bb-dots: bb-dots 4s linear infinite;
+  --animate-bb-spin: bb-spin 0.8s linear infinite;
+  --animate-bb-arrow: bb-arrow 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  --animate-bb-shake: bb-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  --animate-bb-flash: bb-flash 0.9s ease-out;
+  --animate-bb-check: bb-check 0.4s ease-out 0.1s both;
+  --animate-bb-fade-in: bb-fade-in 0.4s ease-out;
+
+  /* The beam's dashes sum to 100 = the rect's pathLength, so an offset of -100 is exactly one lap. */
+  @keyframes bb-beam {
+    from {
+      --bb-offset: 0;
+    }
+    to {
+      --bb-offset: -100;
+    }
+  }
+  /* The dot grid is 6px, so drifting by one cell loops without a seam. */
+  @keyframes bb-dots {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(6px, 6px, 0);
+    }
+  }
+  @keyframes bb-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  /* The arrow leaves to the right and comes back in from the left. */
+  @keyframes bb-arrow {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    45% {
+      transform: translateX(140%);
+      opacity: 0;
+    }
+    46% {
+      transform: translateX(-140%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes bb-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-5px);
+    }
+    40% {
+      transform: translateX(5px);
+    }
+    60% {
+      transform: translateX(-3px);
+    }
+    80% {
+      transform: translateX(2px);
+    }
+  }
+  @keyframes bb-flash {
+    0% {
+      opacity: 0;
+    }
+    18% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes bb-check {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes bb-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+}

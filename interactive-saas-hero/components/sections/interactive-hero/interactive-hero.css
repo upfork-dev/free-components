@@ -1,0 +1,527 @@
+/* ============================================================================
+   Interactive SaaS Hero: tokens and effects.
+   Every class and keyframe starts with ih- so nothing collides with your CSS.
+   theme="auto" follows a .dark class or data-theme="dark" on any ancestor.
+   ========================================================================== */
+
+.ih {
+  /* light */
+  --ih-bg: #f7f8fc;
+  --ih-text: #0b1020;
+  --ih-text-2: #475569;
+  --ih-text-3: #64748b;
+  --ih-line: rgb(15 23 42 / 0.08);
+  --ih-dot: rgb(15 23 42 / 0.09);
+  --ih-glass: rgb(255 255 255 / 0.7);
+  --ih-glass-hover: rgb(255 255 255 / 0.9);
+  --ih-glass-line: rgb(15 23 42 / 0.1);
+  --ih-ring: #f7f8fc; /* avatar rings: the page color */
+  --ih-grain: 0.035;
+  --ih-aurora-blend: multiply;
+  --ih-aurora-opacity: 0.55;
+  --ih-highlight-from: #0b1020;
+
+  /* app window */
+  --ih-win: rgb(255 255 255 / 0.86);
+  --ih-win-line: rgb(15 23 42 / 0.1);
+  --ih-win-shadow: 0 40px 120px -40px rgb(30 41 82 / 0.35), 0 12px 40px -20px rgb(30 41 82 / 0.25);
+  --ih-bar: rgb(248 250 252 / 0.9);
+  --ih-panel: #fbfcfe;
+  --ih-panel-line: rgb(15 23 42 / 0.08);
+  --ih-panel-text: #0f172a;
+  --ih-panel-text-2: #64748b;
+  --ih-control: rgb(15 23 42 / 0.05);
+  --ih-control-active: #ffffff;
+  --ih-canvas: #eef1f7;
+  --ih-site: #ffffff;
+  --ih-site-line: rgb(15 23 42 / 0.08);
+  --ih-site-block: rgb(15 23 42 / 0.06);
+  --ih-site-text: #0f172a;
+  --ih-site-text-2: #64748b;
+  --ih-site-glass: rgb(255 255 255 / 0.55);
+  --ih-site-glass-line: rgb(15 23 42 / 0.1);
+  --ih-selection: #2563eb;
+
+  color-scheme: light;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--ih-bg);
+  color: var(--ih-text);
+}
+
+.ih[data-ih-theme="dark"],
+:where(.dark, [data-theme="dark"]) .ih[data-ih-theme="auto"] {
+  --ih-bg: #05060a;
+  --ih-text: #f1f5f9;
+  --ih-text-2: #cbd5e1;
+  --ih-text-3: #94a3b8;
+  --ih-line: rgb(255 255 255 / 0.08);
+  --ih-dot: rgb(255 255 255 / 0.07);
+  --ih-glass: rgb(255 255 255 / 0.05);
+  --ih-glass-hover: rgb(255 255 255 / 0.09);
+  --ih-glass-line: rgb(255 255 255 / 0.1);
+  --ih-ring: #05060a;
+  --ih-grain: 0.04;
+  --ih-aurora-blend: screen;
+  --ih-aurora-opacity: 0.5;
+  --ih-highlight-from: #ffffff;
+
+  --ih-win: rgb(11 13 18 / 0.9);
+  --ih-win-line: rgb(255 255 255 / 0.1);
+  --ih-win-shadow: 0 40px 140px -40px rgb(0 0 0 / 0.9), 0 0 0 1px rgb(255 255 255 / 0.02);
+  --ih-bar: rgb(15 17 24 / 0.9);
+  --ih-panel: #0d1016;
+  --ih-panel-line: rgb(255 255 255 / 0.07);
+  --ih-panel-text: #e2e8f0;
+  --ih-panel-text-2: #8b95a7;
+  --ih-control: rgb(255 255 255 / 0.05);
+  --ih-control-active: rgb(255 255 255 / 0.12);
+  --ih-canvas: #07080c;
+  --ih-site: #0b0d14;
+  --ih-site-line: rgb(255 255 255 / 0.08);
+  --ih-site-block: rgb(255 255 255 / 0.06);
+  --ih-site-text: #e2e8f0;
+  --ih-site-text-2: #94a3b8;
+  --ih-site-glass: rgb(255 255 255 / 0.08);
+  --ih-site-glass-line: rgb(255 255 255 / 0.15);
+  --ih-selection: #3b82f6;
+
+  color-scheme: dark;
+}
+
+/* Accents: the badge icon, the highlight, the call to action, the aurora. */
+.ih,
+.ih[data-ih-accent="sky"] {
+  --ih-accent: #38bdf8;
+  --ih-accent-strong: #2563eb;
+  --ih-accent-text: light-dark(#0369a1, #7dd3fc);
+  --ih-cta-from: #0ea5e9;
+  --ih-cta-to: #2563eb;
+  --ih-hl-mid: light-dark(#0284c7, #7dd3fc);
+  --ih-hl-end: light-dark(#7c3aed, #c4b5fd);
+  --ih-aurora-1: #38bdf8;
+  --ih-aurora-2: #6366f1;
+  --ih-aurora-3: #8b5cf6;
+}
+.ih[data-ih-accent="violet"] {
+  --ih-accent: #a78bfa;
+  --ih-accent-strong: #7c3aed;
+  --ih-accent-text: light-dark(#6d28d9, #c4b5fd);
+  --ih-cta-from: #8b5cf6;
+  --ih-cta-to: #4f46e5;
+  --ih-hl-mid: light-dark(#7c3aed, #c4b5fd);
+  --ih-hl-end: light-dark(#db2777, #f9a8d4);
+  --ih-aurora-1: #a78bfa;
+  --ih-aurora-2: #ec4899;
+  --ih-aurora-3: #6366f1;
+}
+.ih[data-ih-accent="emerald"] {
+  --ih-accent: #34d399;
+  --ih-accent-strong: #059669;
+  --ih-accent-text: light-dark(#047857, #6ee7b7);
+  --ih-cta-from: #10b981;
+  --ih-cta-to: #0d9488;
+  --ih-hl-mid: light-dark(#059669, #6ee7b7);
+  --ih-hl-end: light-dark(#0891b2, #67e8f9);
+  --ih-aurora-1: #34d399;
+  --ih-aurora-2: #22d3ee;
+  --ih-aurora-3: #6366f1;
+}
+
+/* ---- Background ----------------------------------------------------------- */
+
+.ih-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ih-aurora span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: var(--ih-aurora-opacity);
+  mix-blend-mode: var(--ih-aurora-blend);
+  animation: ih-drift 26s ease-in-out infinite alternate;
+}
+.ih-aurora span:nth-child(1) {
+  width: 46rem;
+  height: 30rem;
+  left: calc(50% - 40rem);
+  top: -10rem;
+  background: radial-gradient(closest-side, var(--ih-aurora-1), transparent);
+}
+.ih-aurora span:nth-child(2) {
+  width: 40rem;
+  height: 28rem;
+  left: calc(50% - 6rem);
+  top: -6rem;
+  background: radial-gradient(closest-side, var(--ih-aurora-2), transparent);
+  animation-duration: 22s;
+  animation-delay: -8s;
+}
+.ih-aurora span:nth-child(3) {
+  width: 34rem;
+  height: 24rem;
+  left: calc(50% - 18rem);
+  top: 8rem;
+  background: radial-gradient(closest-side, var(--ih-aurora-3), transparent);
+  animation-duration: 30s;
+  animation-delay: -15s;
+}
+@keyframes ih-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(5rem, 2rem, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(-4rem, -1rem, 0) scale(0.94);
+  }
+}
+.ih-dots {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--ih-dot) 1px, transparent 1.4px) 0 0 / 24px 24px;
+  -webkit-mask-image: radial-gradient(60rem 36rem at 50% 20%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(60rem 36rem at 50% 20%, #000 20%, transparent 75%);
+}
+.ih-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--ih-grain);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.ih-spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background: radial-gradient(520px circle at var(--ih-mx, 50%) var(--ih-my, 30%), color-mix(in oklab, var(--ih-accent) 12%, transparent), transparent 70%);
+}
+.ih-spotlight[data-on] {
+  opacity: 1;
+}
+/* The horizon: a thin line of light where the app window begins, as if the window gives off light. */
+.ih-horizon {
+  position: absolute;
+  left: 50%;
+  width: min(1100px, 92%);
+  height: 160px;
+  translate: -50% -50%;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 2px at 50% 50%, color-mix(in oklab, var(--ih-accent) 90%, white), transparent),
+    radial-gradient(45% 60px at 50% 50%, color-mix(in oklab, var(--ih-accent) 30%, transparent), transparent);
+}
+
+/* ---- Announcement badge: a 1px border with a rotating highlight ----------- */
+
+@property --ih-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.ih-badge {
+  position: relative;
+  isolation: isolate;
+}
+.ih-badge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--ih-angle), var(--ih-glass-line) 0deg, var(--ih-glass-line) 250deg, var(--ih-accent) 300deg, var(--ih-glass-line) 350deg);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: ih-spin 4s linear infinite;
+}
+@keyframes ih-spin {
+  to {
+    --ih-angle: 360deg;
+  }
+}
+
+/* ---- Headline -------------------------------------------------------------- */
+
+/* Word-by-word entrance, CSS only, so the text is in the server HTML and readable without JS. */
+.ih-word {
+  display: inline-block;
+  animation: ih-word-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+@keyframes ih-word-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(8px);
+  }
+}
+.ih-highlight {
+  position: relative;
+  background: linear-gradient(100deg, var(--ih-highlight-from) 10%, var(--ih-hl-mid) 50%, var(--ih-hl-end) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* A light sweep across the highlight every six seconds. */
+.ih-highlight::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 40%, rgb(255 255 255 / 0.85) 50%, transparent 60%) -150% 0 / 250% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ih-shine 6s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+@keyframes ih-shine {
+  0%,
+  70% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 250% 0;
+  }
+}
+/* Speed lines that streak once behind the highlight on load. */
+.ih-speed {
+  position: absolute;
+  right: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--ih-accent));
+  opacity: 0;
+  animation: ih-streak 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  pointer-events: none;
+}
+@keyframes ih-streak {
+  0% {
+    opacity: 0;
+    transform: translateX(-60px) scaleX(0.3);
+  }
+  40% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(40px) scaleX(1);
+  }
+}
+
+/* ---- Primary call to action -------------------------------------------- */
+
+.ih-cta {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, var(--ih-cta-from), var(--ih-cta-to));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    0 10px 30px -10px color-mix(in oklab, var(--ih-cta-to) 80%, transparent),
+    0 0 0 0 transparent;
+  transition:
+    box-shadow 0.3s ease,
+    scale 0.15s ease;
+  translate: var(--ih-mag-x, 0px) var(--ih-mag-y, 0px);
+}
+.ih-cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 14px 44px -10px color-mix(in oklab, var(--ih-cta-to) 95%, transparent),
+    0 0 0 6px color-mix(in oklab, var(--ih-cta-from) 18%, transparent);
+}
+.ih-cta:active {
+  scale: 0.97;
+}
+/* Its animated border: the same rotating-conic mask as the badge. */
+.ih-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--ih-angle), rgb(255 255 255 / 0.15) 0deg, rgb(255 255 255 / 0.15) 240deg, rgb(255 255 255 / 0.9) 300deg, rgb(255 255 255 / 0.15) 350deg);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: ih-spin 4s linear infinite;
+  pointer-events: none;
+}
+/* Rising particles, each with its own seeded size, position, delay and duration. */
+.ih-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.ih-particles i {
+  position: absolute;
+  bottom: -6px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.85);
+  opacity: 0;
+  animation: ih-rise var(--d) linear var(--delay) infinite;
+}
+.ih-cta:hover .ih-particles i {
+  animation-duration: calc(var(--d) * 0.55);
+  background: #fff;
+}
+@keyframes ih-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-58px);
+    opacity: 0;
+  }
+}
+
+/* ---- Secondary call to action: a play button with a pulsing ring -------- */
+
+.ih-play-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--ih-accent);
+  animation: ih-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes ih-ping {
+  75%,
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes ih-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* ---- Hero visuals on the canvas: metallic ring, glossy orb, faceted prism -- */
+
+.ih-visual {
+  position: relative;
+  aspect-ratio: 1;
+  animation: ih-turn 18s linear infinite;
+}
+@keyframes ih-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+.ih-ring {
+  border-radius: 50%;
+  background:
+    conic-gradient(from 210deg, #e2e8f0, #64748b, #f8fafc, #475569, #cbd5e1, #334155, #e2e8f0);
+  -webkit-mask: radial-gradient(closest-side, transparent 52%, #000 54%, #000 98%, transparent);
+  mask: radial-gradient(closest-side, transparent 52%, #000 54%, #000 98%, transparent);
+  box-shadow: inset 0 0 40px rgb(255 255 255 / 0.4);
+}
+.ih-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent, color-mix(in oklab, var(--ih-accent) 70%, transparent), transparent 40%);
+  mix-blend-mode: var(--ih-blend, overlay);
+}
+.ih-orb {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0) 22%),
+    radial-gradient(circle at 60% 70%, var(--ih-aurora-2), transparent 60%),
+    radial-gradient(circle at 40% 40%, var(--ih-accent), var(--ih-accent-strong) 70%, #0f172a);
+  box-shadow: inset -20px -30px 60px rgb(0 0 0 / 0.45);
+  animation-duration: 30s;
+}
+.ih-orb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 70% 80%, color-mix(in oklab, var(--ih-aurora-3) 80%, transparent), transparent 55%);
+  mix-blend-mode: var(--ih-blend, overlay);
+}
+.ih-prism {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  background:
+    conic-gradient(from 30deg at 50% 50%, var(--ih-aurora-1), var(--ih-aurora-3), var(--ih-aurora-2), var(--ih-accent), var(--ih-aurora-1));
+  animation-duration: 24s;
+}
+.ih-prism::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgb(255 255 255 / 0.45), transparent 45%),
+    linear-gradient(300deg, rgb(0 0 0 / 0.35), transparent 50%);
+}
+.ih-prism::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 90deg, transparent 0 60deg, rgb(255 255 255 / 0.5) 60deg 120deg, transparent 120deg 240deg, rgb(0 0 0 / 0.25) 240deg 300deg, transparent 300deg);
+  mix-blend-mode: var(--ih-blend, overlay);
+}
+
+/* ---- Off screen or in a hidden tab, every loop in the section holds still ------ */
+
+.ih[data-ih-paused] *,
+.ih[data-ih-paused] *::before,
+.ih[data-ih-paused] *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---- Reduced motion ------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ih-aurora span,
+  .ih-badge::before,
+  .ih-cta::before,
+  .ih-particles i,
+  .ih-play-ring,
+  .ih-visual,
+  .ih-highlight::after,
+  .ih-speed {
+    animation: none;
+  }
+  .ih-word {
+    animation: none;
+  }
+  .ih-particles {
+    display: none;
+  }
+}

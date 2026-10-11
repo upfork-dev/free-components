@@ -1,0 +1,713 @@
+/* ============================================================================
+   Aurora Glass Testimonials
+   Every color, size and timing is a custom property on .agt, so a re-theme is a
+   handful of overrides. Colors use light-dark(): they follow the visitor's
+   color scheme, or a data-theme="light" | "dark" on the section or any ancestor.
+   ========================================================================== */
+
+.agt {
+  /* Accent and aurora */
+  --agt-accent: light-dark(#6d4aff, #a78bfa);
+  --agt-accent-2: light-dark(#0891b2, #67e8f9);
+  --agt-blob-1: light-dark(#c4b5fd, #7c3aed);
+  --agt-blob-2: light-dark(#a5f3fc, #0891b2);
+  --agt-blob-3: light-dark(#fde68a, #d97706);
+
+  /* Surfaces and text (text stays at 4.5:1 or better on the glass in both themes) */
+  --agt-bg: light-dark(#f6f5fb, #08070d);
+  --agt-text: light-dark(#14131c, #f5f4fa);
+  --agt-text-2: light-dark(#4d4b5c, #c9c6d8);
+  --agt-text-3: light-dark(#625f72, #a7a4ba);
+  --agt-glass-bg: light-dark(rgb(255 255 255 / 0.62), rgb(24 22 38 / 0.56));
+  --agt-glass-solid: light-dark(rgb(255 255 255 / 0.95), rgb(24 22 38 / 0.96));
+  --agt-pill-bg: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.07));
+  --agt-edge-1: light-dark(rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.3));
+  --agt-edge-2: light-dark(rgb(255 255 255 / 0.3), rgb(255 255 255 / 0.06));
+  --agt-edge-3: light-dark(rgb(109 74 255 / 0.28), rgb(167 139 250 / 0.22));
+  --agt-highlight: light-dark(rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.1));
+  --agt-sheen: light-dark(rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.12));
+  --agt-star: #f5a524;
+  --agt-star-empty: light-dark(rgb(20 18 40 / 0.14), rgb(255 255 255 / 0.16));
+  --agt-verified: light-dark(#047857, #6ee7b7);
+  --agt-shadow:
+    0 1px 1px light-dark(rgb(17 12 46 / 0.04), rgb(0 0 0 / 0.3)),
+    0 18px 40px -18px light-dark(rgb(30 20 80 / 0.28), rgb(0 0 0 / 0.65)),
+    0 60px 110px -40px light-dark(rgb(60 40 140 / 0.3), rgb(0 0 0 / 0.75));
+
+  /* Icons, drawn by CSS masks so they take any color */
+  --agt-icon-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1.2l2.41 5.88 6.34.48-4.85 4.11 1.51 6.17L10 14.5l-5.41 3.34 1.51-6.17-4.85-4.11 6.34-.48z'/%3E%3C/svg%3E");
+  --agt-icon-quote: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 9.6C2 6.2 3.9 3.8 7 3v2.1C5.5 5.7 4.8 6.8 4.7 8H7v5H2zm7 0C9 6.2 10.9 3.8 14 3v2.1c-1.5.6-2.2 1.7-2.3 2.9H14v5H9z'/%3E%3C/svg%3E");
+  --agt-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='8' cy='8' r='6.5'/%3E%3Cpath d='M5.3 8.2l1.8 1.8 3.6-3.8'/%3E%3C/svg%3E");
+
+  /* Shape, glass and motion */
+  --agt-radius: 28px;
+  --agt-blur: 24px;
+  --agt-card-w: min(540px, calc(100vw - 48px));
+  --agt-card-h: 300px;
+  --agt-lift: -34px; /* each card behind sits this much higher */
+  --agt-depth: -60px; /* and this much farther away */
+  --agt-shrink: 0.055; /* and this much smaller */
+  --agt-spring: cubic-bezier(0.2, 1.18, 0.32, 1);
+  --agt-interval: 6000ms;
+
+  color-scheme: light dark;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--agt-bg);
+  color: var(--agt-text);
+}
+
+/* Theme overrides, on the section itself or any ancestor such as <html>. */
+:where([data-theme="dark"]) .agt:not([data-theme="light"]),
+.agt[data-theme="dark"] {
+  color-scheme: dark;
+}
+:where([data-theme="light"]) .agt:not([data-theme="dark"]),
+.agt[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* ---- Aurora: three slow, blurred blobs behind the stage ------------------- */
+
+.agt-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.agt-blob {
+  position: absolute;
+  width: 42rem;
+  height: 42rem;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.7;
+  mix-blend-mode: multiply;
+  animation: agt-drift 26s ease-in-out infinite alternate;
+}
+.agt-blob:nth-child(1) {
+  background: var(--agt-blob-1);
+  left: calc(50% - 38rem);
+  top: 18%;
+}
+.agt-blob:nth-child(2) {
+  background: var(--agt-blob-2);
+  left: calc(50% - 4rem);
+  top: 32%;
+  animation-duration: 22s;
+  animation-delay: -7s;
+}
+.agt-blob:nth-child(3) {
+  background: var(--agt-blob-3);
+  left: calc(50% - 20rem);
+  top: 55%;
+  width: 30rem;
+  height: 30rem;
+  animation-duration: 30s;
+  animation-delay: -14s;
+}
+@keyframes agt-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6rem, -3rem, 0) scale(1.12);
+  }
+  to {
+    transform: translate3d(-4rem, 4rem, 0) scale(0.92);
+  }
+}
+/* Dark: the blobs glow (screen) instead of tinting (multiply). */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme="light"])) .agt:not([data-theme="light"]) .agt-blob {
+    mix-blend-mode: screen;
+    opacity: 0.42;
+  }
+}
+:where([data-theme="dark"]) .agt:not([data-theme="light"]) .agt-blob,
+.agt[data-theme="dark"] .agt-blob {
+  mix-blend-mode: screen;
+  opacity: 0.42;
+}
+
+/* ---- Stage and the 3D stack ----------------------------------------------- */
+
+.agt-stage {
+  position: relative;
+  height: calc(var(--agt-card-h) + 136px);
+  perspective: 1400px;
+  outline: none;
+  touch-action: pan-y; /* vertical scrolling stays native; horizontal drags swipe */
+}
+.agt-stage:focus-visible .agt-card[data-front] .agt-card-inner {
+  outline: 2px solid var(--agt-accent);
+  outline-offset: 6px;
+}
+
+.agt-card {
+  /* The resting place for this card's depth (--i). Kept in one property so the
+     fly-out animation can end exactly where the card rests. */
+  --agt-rest: translate3d(var(--dx, 0px), calc(var(--i, 0) * var(--agt-lift)), calc(var(--i, 0) * var(--agt-depth)))
+    scale(calc(1 - var(--i, 0) * var(--agt-shrink))) rotate(calc(var(--r, 0) * 1deg + var(--drot, 0deg)));
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--agt-card-w);
+  height: var(--agt-card-h);
+  margin-inline: auto;
+  z-index: calc(40 - var(--i, 0));
+  transform: var(--agt-rest);
+  /* No opacity or filter on the card: either would stop its glass blurring what is behind it, and the
+     text of the cards underneath would show through sharp. Depth comes from the veil and a text blur. */
+  transition:
+    transform 0.75s var(--agt-spring),
+    opacity 0.5s ease;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.agt-card[data-front] {
+  cursor: grab;
+}
+.agt-card[data-hidden] {
+  opacity: 0;
+  pointer-events: none;
+}
+/* A card in flight stays solid: one flying in from the side from its first frame, one sent to the back
+   until it lands (it may then wait out of sight, behind the visible cards). */
+.agt-card[data-entering],
+.agt-card[data-leaving] {
+  opacity: 1;
+  transition: none;
+}
+.agt[data-dragging] .agt-card[data-front] {
+  transition: none;
+  cursor: grabbing;
+}
+
+/* Sent to the back: out to the side on top of the stack, then behind it to its new place. */
+.agt-card[data-leaving] {
+  animation: agt-leave 0.8s cubic-bezier(0.3, 0.75, 0.25, 1) both;
+}
+@keyframes agt-leave {
+  0% {
+    transform: translate3d(var(--dx, 0px), 0, 0) rotate(var(--drot, 0deg));
+    z-index: 60;
+  }
+  42% {
+    transform: translate3d(calc(var(--dir, -1) * 68%), -6%, 0) rotate(calc(var(--dir, -1) * 9deg)) scale(0.96);
+    z-index: 60;
+  }
+  43% {
+    z-index: 1;
+  }
+  100% {
+    transform: var(--agt-rest);
+    z-index: 1;
+  }
+}
+/* Brought back to the front (previous): in from the side, on top. */
+.agt-card[data-entering] {
+  animation: agt-enter 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+@keyframes agt-enter {
+  from {
+    transform: translate3d(calc(var(--dir, 1) * -68%), -6%, 0) rotate(calc(var(--dir, 1) * -9deg)) scale(0.96);
+    z-index: 60;
+  }
+  to {
+    transform: var(--agt-rest);
+    z-index: 60;
+  }
+}
+
+/* ---- The glass card ------------------------------------------------------- */
+
+.agt-card-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 28px 32px 30px;
+  border-radius: var(--agt-radius);
+  background: var(--agt-glass-bg);
+  -webkit-backdrop-filter: blur(var(--agt-blur)) saturate(160%);
+  backdrop-filter: blur(var(--agt-blur)) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 var(--agt-highlight),
+    var(--agt-shadow);
+  /* Tilt toward the cursor (front card), eased back on leave. */
+  transform: perspective(900px) rotateX(calc(var(--ty, 0) * -7deg)) rotateY(calc(var(--tx, 0) * 7deg));
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  container-type: inline-size;
+}
+/* 1px gradient border: bright top-left, fading toward the bottom-right. */
+.agt-card-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(145deg, var(--agt-edge-1), var(--agt-edge-2) 48%, var(--agt-edge-3));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+/* Grain, so the glass is never flat. */
+.agt-card-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.05;
+  pointer-events: none;
+}
+/* Without backdrop-filter, a more opaque card keeps the text readable. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .agt-card-inner {
+    background: var(--agt-glass-solid);
+  }
+}
+
+/* Depth: cards further back fade toward the background, and their text softens. */
+.agt-veil {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--agt-bg);
+  opacity: calc(var(--i, 0) * 0.17);
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.agt-card-top,
+.agt-quote,
+.agt-rating,
+.agt-author {
+  filter: blur(calc(var(--i, 0) * 0.6px));
+  transition: filter 0.5s ease;
+}
+.agt-card[data-front] :is(.agt-card-top, .agt-quote, .agt-rating, .agt-author) {
+  filter: none;
+}
+
+/* A card sent to the back stays crisp while it is still on top, and dims as it passes behind. */
+.agt-card[data-leaving] .agt-veil {
+  animation: agt-sink-veil 0.8s ease both;
+}
+.agt-card[data-leaving] :is(.agt-card-top, .agt-quote, .agt-rating, .agt-author) {
+  animation: agt-sink-text 0.8s ease both;
+}
+@keyframes agt-sink-veil {
+  0%,
+  42% {
+    opacity: 0;
+  }
+}
+@keyframes agt-sink-text {
+  0%,
+  42% {
+    filter: none;
+  }
+}
+
+/* A specular sheen that follows the cursor across the front card. */
+.agt-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(380px circle at var(--mx, 30%) var(--my, 0%), var(--agt-sheen), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.agt-stage:hover .agt-card[data-front] .agt-sheen {
+  opacity: 1;
+}
+
+.agt-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.agt-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: var(--agt-pill-bg);
+  box-shadow:
+    inset 0 1px 0 var(--agt-highlight),
+    0 0 0 1px light-dark(rgb(20 18 40 / 0.06), rgb(255 255 255 / 0.08));
+}
+.agt-quote-mark::before,
+.agt-verified::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: var(--agt-icon-quote) center / contain no-repeat;
+  mask: var(--agt-icon-quote) center / contain no-repeat;
+}
+.agt-verified::before {
+  width: 14px;
+  height: 14px;
+  background: var(--agt-verified);
+  -webkit-mask-image: var(--agt-icon-check);
+  mask-image: var(--agt-icon-check);
+}
+.agt-quote-mark {
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  color: var(--agt-accent);
+  /* inner elements move a little more than the card: parallax */
+  translate: calc(var(--tx, 0) * 7px) calc(var(--ty, 0) * 7px);
+  transition: translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.agt-verified {
+  padding: 5px 11px 5px 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--agt-text-2);
+}
+
+.agt-quote {
+  margin: 18px 0 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  letter-spacing: -0.006em;
+  color: var(--agt-text);
+  text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+.agt-quote p {
+  margin: 0;
+}
+
+.agt-rating {
+  display: flex;
+  gap: 3px;
+  margin-top: auto;
+  padding-top: 14px;
+}
+.agt-star {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+.agt-star::before,
+.agt-star.agt-on::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--agt-star-empty);
+  -webkit-mask: var(--agt-icon-star) center / contain no-repeat;
+  mask: var(--agt-icon-star) center / contain no-repeat;
+}
+.agt-star.agt-on::after {
+  background: var(--agt-star);
+}
+/* Stars fill one after another whenever a card comes to the front. */
+.agt-card[data-front] .agt-star.agt-on::after {
+  animation: agt-star 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) calc(0.15s + var(--s, 0) * 70ms) both;
+}
+@keyframes agt-star {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.agt-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+.agt-avatar {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--agt-accent), var(--agt-accent-2));
+  translate: calc(var(--tx, 0) * 5px) calc(var(--ty, 0) * 5px);
+  transition: translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* Initials under the photo: shown when there is no photo or it fails to load. */
+.agt-avatar::before {
+  content: attr(data-initials);
+  position: absolute;
+  inset: 2px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--agt-bg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--agt-text);
+}
+.agt-avatar img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--agt-bg);
+}
+.agt-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+  color: var(--agt-text);
+}
+.agt-role {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--agt-text-2);
+}
+.agt-source {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--agt-text-3);
+  text-align: right;
+  white-space: nowrap;
+}
+/* A narrow card (phones, the no-JS grid): the source moves under the name. */
+@container (max-width: 440px) {
+  .agt-author {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .agt-source {
+    width: 100%;
+    margin-left: 56px;
+    text-align: left;
+  }
+}
+
+/* Autoplay progress on the front card; its animationend advances the stack. */
+.agt-progress {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: light-dark(rgb(20 18 40 / 0.07), rgb(255 255 255 / 0.08));
+  overflow: hidden;
+}
+.agt-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--agt-accent), var(--agt-accent-2));
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.agt-card[data-front] .agt-progress::after {
+  animation: agt-progress var(--agt-interval) linear forwards;
+}
+.agt[data-paused] .agt-progress::after {
+  animation-play-state: paused;
+}
+.agt[data-autoplay="off"] .agt-progress {
+  display: none;
+}
+@keyframes agt-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---- Controls ------------------------------------------------------------- */
+
+.agt-button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--agt-text);
+  background: var(--agt-glass-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 var(--agt-highlight),
+    0 0 0 1px light-dark(rgb(20 18 40 / 0.08), rgb(255 255 255 / 0.1)),
+    0 8px 20px -10px light-dark(rgb(30 20 80 / 0.3), rgb(0 0 0 / 0.6));
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+.agt-button:hover {
+  transform: translateY(-1px);
+}
+.agt-button:active {
+  transform: scale(0.95);
+}
+.agt-button:focus-visible {
+  outline: 2px solid var(--agt-accent);
+  outline-offset: 3px;
+}
+.agt-button-sm {
+  width: 32px;
+  height: 32px;
+}
+.agt-toggle[data-playing="true"] .agt-icon-play,
+.agt-toggle:not([data-playing="true"]) .agt-icon-pause {
+  display: none;
+}
+.agt-counter {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--agt-text-2);
+}
+.agt-controls[hidden] {
+  display: none;
+}
+
+/* ---- Trust bar ------------------------------------------------------------ */
+
+.agt-stack-avatars img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--agt-bg);
+}
+.agt-stack-avatars img + img {
+  margin-left: -10px;
+}
+.agt-logo {
+  color: var(--agt-text-3);
+  opacity: 0.85;
+}
+
+/* ---- Reveal on scroll ----------------------------------------------------- */
+
+.agt-js .agt:not([data-revealed]) [data-agt-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.agt-js .agt:not([data-revealed]) .agt-card {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0) scale(0.96);
+}
+.agt [data-agt-reveal] {
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.agt[data-revealing] .agt-card {
+  transition-delay: calc(var(--k, 0) * 80ms);
+}
+.agt[data-revealing] [data-agt-reveal] {
+  transition-delay: calc(var(--k, 0) * 90ms);
+}
+
+/* ---- Without JavaScript: a plain responsive grid -------------------------- */
+
+:where(html:not(.agt-js)) .agt-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 20px;
+  height: auto;
+  perspective: none;
+}
+:where(html:not(.agt-js)) .agt-card {
+  position: relative;
+  width: auto;
+  height: auto;
+  transform: none;
+  opacity: 1;
+  filter: none;
+  cursor: auto;
+}
+:where(html:not(.agt-js)) .agt-card-inner {
+  min-height: var(--agt-card-h);
+}
+:where(html:not(.agt-js)) .agt-controls,
+:where(html:not(.agt-js)) .agt-progress,
+:where(html:not(.agt-js)) .agt-veil {
+  display: none;
+}
+:where(html:not(.agt-js)) :is(.agt-card-top, .agt-quote, .agt-rating, .agt-author) {
+  filter: none;
+}
+
+/* ---- Small screens: one card and a peek of the next ----------------------- */
+
+@media (max-width: 640px) {
+  .agt {
+    --agt-card-h: 340px;
+    --agt-lift: -16px;
+  }
+  .agt-card-inner {
+    padding: 24px 22px 26px;
+  }
+  .agt-quote {
+    font-size: 1.0625rem;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+  }
+  .agt-blob {
+    filter: blur(60px);
+  }
+  .agt-blob:nth-child(3) {
+    display: none;
+  }
+}
+
+/* ---- Reduced motion: no drift, autoplay, tilt or flights; simple fades ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .agt-blob {
+    animation: none;
+  }
+  .agt-card {
+    transition: opacity 0.3s ease;
+  }
+  .agt-card[data-leaving],
+  .agt-card[data-entering] {
+    animation: none;
+  }
+  .agt-card-inner,
+  .agt-quote-mark,
+  .agt-avatar {
+    transform: none;
+    translate: none;
+  }
+  .agt-card[data-front] .agt-star.agt-on::after {
+    animation: none;
+  }
+  .agt-progress {
+    display: none;
+  }
+  .agt-js .agt:not([data-revealed]) .agt-card,
+  .agt-js .agt:not([data-revealed]) [data-agt-reveal] {
+    transform: none;
+  }
+}

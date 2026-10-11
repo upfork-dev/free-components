@@ -1,0 +1,16 @@
+{
+  "name": "spotlight-bento-feature-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A feature list linked to a bento image grid: single-file HTML, Tailwind CSS and vanilla JS.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.3.3"
+  },
+  "packageManager": "pnpm@12.8.1"
+}

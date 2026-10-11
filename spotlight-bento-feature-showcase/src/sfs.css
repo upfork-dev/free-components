@@ -1,0 +1,774 @@
+/* ============================================================================
+   Spotlight Bento Feature Showcase
+   A feature list (a timeline of markers) linked to a bento grid of image tiles.
+   Every color, radius, blur and timing is a custom property on .sfs. Colors use
+   light-dark(): the visitor's scheme, or data-theme on the section or an ancestor.
+   ========================================================================== */
+
+/* The active feature's accent, registered so it can fade from one color to the next. */
+@property --sfs-active-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #34d399;
+}
+
+.sfs {
+  --sfs-bg: light-dark(#fafafa, #0a0a0a);
+  --sfs-text: light-dark(#0b0b0f, #f5f5f7);
+  --sfs-text-2: light-dark(#52525b, #a1a1aa);
+  --sfs-text-3: light-dark(#6b6b74, #8f8f99);
+  --sfs-line: light-dark(rgb(9 9 11 / 0.12), rgb(255 255 255 / 0.12));
+  --sfs-dot: light-dark(rgb(9 9 11 / 0.07), rgb(255 255 255 / 0.06));
+  --sfs-gradient-end: light-dark(#18181b, #ffffff);
+  --sfs-cta-bg: light-dark(#0b0b0f, #f5f5f7);
+  --sfs-cta-text: light-dark(#ffffff, #0b0b0f);
+  --sfs-tile-bg: #111113;
+  --sfs-veil-color: #0a0a0a; /* tiles dim toward black in both themes, so captions stay readable */
+  --sfs-veil-dim: 0.42;
+  --sfs-card-radius: 24px;
+  --sfs-pill-blur: 12px;
+  --sfs-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --sfs-interval: 5000ms;
+
+  color-scheme: light dark;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--sfs-bg);
+  color: var(--sfs-text);
+  transition: --sfs-active-accent 0.6s ease;
+}
+:where([data-theme="dark"]) .sfs:not([data-theme="light"]),
+.sfs[data-theme="dark"] {
+  color-scheme: dark;
+}
+:where([data-theme="light"]) .sfs:not([data-theme="dark"]),
+.sfs[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* A faint glow in the active accent behind the headline, over a fading dot grid. */
+.sfs-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 22% 18%, color-mix(in oklab, var(--sfs-active-accent) 16%, transparent), transparent 70%),
+    radial-gradient(circle, var(--sfs-dot) 1px, transparent 1.4px) 0 0 / 22px 22px;
+  -webkit-mask-image: radial-gradient(70rem 50rem at 30% 30%, #000 30%, transparent 80%);
+  mask-image: radial-gradient(70rem 50rem at 30% 30%, #000 30%, transparent 80%);
+}
+
+/* ---- Left column ---------------------------------------------------------- */
+
+.sfs-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sfs-text-2);
+}
+.sfs-eyebrow-dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sfs-active-accent);
+}
+.sfs-eyebrow-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: sfs-pulse 2.4s ease-out infinite;
+}
+@keyframes sfs-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+.sfs-headline {
+  margin: 20px 0 0;
+  font-size: clamp(2.75rem, 5.6vw, 4.5rem);
+  line-height: 1.02;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.sfs-gradient {
+  background: linear-gradient(100deg, var(--sfs-active-accent), var(--sfs-gradient-end) 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sfs-hue 20s linear infinite;
+}
+@keyframes sfs-hue {
+  50% {
+    filter: hue-rotate(40deg);
+  }
+}
+/* Word-by-word clip reveal (the script wraps the words). */
+.sfs-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.sfs-word > span {
+  display: inline-block;
+  transition: transform 0.8s var(--sfs-ease);
+  transition-delay: calc(120ms + var(--w, 0) * 40ms);
+}
+.sfs-js .sfs:not([data-revealed]) .sfs-word > span {
+  transform: translateY(105%);
+}
+
+/* The feature stepper: markers joined by a connector that draws as the active feature moves on. */
+.sfs-steps {
+  --gap: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  margin: 44px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.sfs-step {
+  position: relative;
+  display: block;
+  padding-left: 44px;
+  border-radius: 14px;
+  outline: none;
+  cursor: pointer;
+}
+.sfs-step:focus-visible .sfs-step-title {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.sfs-marker {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--sfs-line);
+  background: var(--sfs-bg);
+  transition:
+    border-color 0.4s ease,
+    background-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+.sfs-marker::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: #fff;
+  transform: scale(0);
+  transition: transform 0.4s var(--sfs-ease);
+}
+.sfs-step[data-visited] .sfs-marker {
+  border-color: color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.sfs-step[data-active] .sfs-marker {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow:
+    0 0 0 5px color-mix(in oklab, var(--accent) 18%, transparent),
+    0 0 22px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.sfs-step[data-active] .sfs-marker::after {
+  transform: scale(1);
+}
+/* The connector below each marker, down to the next one: a track and a fill that draws. */
+.sfs-step:not(:last-child)::after,
+.sfs-connector {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 28px;
+  bottom: calc(-1 * var(--gap) - 2px);
+  width: 2px;
+  border-radius: 2px;
+  background: var(--sfs-line);
+}
+.sfs-connector {
+  z-index: 1;
+  background: linear-gradient(var(--accent), var(--accent-next, var(--accent)));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.45s var(--sfs-ease);
+}
+.sfs-step[data-visited] .sfs-connector {
+  transform: scaleY(1);
+}
+.sfs-step:last-child .sfs-connector {
+  display: none;
+}
+.sfs-step-title {
+  display: block;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--sfs-text);
+}
+.sfs-step-desc {
+  display: block;
+  margin-top: 4px;
+  max-width: 34rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--sfs-text-2);
+  text-wrap: pretty;
+}
+.sfs-js .sfs .sfs-step:not([data-active]) .sfs-step-title,
+.sfs-js .sfs .sfs-step:not([data-active]) .sfs-step-desc {
+  opacity: 0.62;
+}
+.sfs-step-title,
+.sfs-step-desc {
+  transition: opacity 0.4s ease;
+}
+/* Autoplay progress inside the active item; its animationend moves to the next feature. */
+.sfs-step-progress {
+  position: relative;
+  display: block;
+  width: min(220px, 100%);
+  height: 2px;
+  margin-top: 12px;
+  border-radius: 2px;
+  background: var(--sfs-line);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sfs-step-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.sfs[data-autoplay="on"] .sfs-step[data-active] .sfs-step-progress {
+  opacity: 1;
+}
+.sfs[data-autoplay="on"] .sfs-step[data-active] .sfs-step-progress::after {
+  animation: sfs-progress var(--sfs-interval) linear forwards;
+}
+.sfs[data-paused] .sfs-step-progress::after {
+  animation-play-state: paused;
+}
+@keyframes sfs-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.sfs-subhead {
+  margin: 44px 0 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.sfs-body {
+  margin: 8px 0 0;
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--sfs-text-2);
+  text-wrap: pretty;
+}
+
+/* ---- Call to action ------------------------------------------------------- */
+
+.sfs-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 24px;
+  margin-top: 32px;
+}
+.sfs-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 20px 0 24px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--sfs-cta-bg);
+  color: var(--sfs-cta-text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  translate: var(--mag-x, 0px) var(--mag-y, 0px);
+  box-shadow: 0 0 0 0 transparent;
+  transition:
+    box-shadow 0.35s ease,
+    scale 0.2s ease;
+}
+.sfs-cta:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--sfs-active-accent) 55%, transparent),
+    0 12px 40px -10px color-mix(in oklab, var(--sfs-active-accent) 70%, transparent);
+}
+.sfs-cta:active {
+  scale: 0.97;
+}
+.sfs-cta:focus-visible {
+  outline: 2px solid var(--sfs-active-accent);
+  outline-offset: 3px;
+}
+/* A band of light that crosses the pill once on hover. */
+.sfs-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, color-mix(in oklab, var(--sfs-cta-text) 18%, transparent) 50%, transparent 70%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.sfs-cta:hover::before {
+  animation: sfs-shimmer 0.9s var(--sfs-ease);
+}
+@keyframes sfs-shimmer {
+  to {
+    transform: translateX(120%);
+  }
+}
+.sfs-cta-arrow {
+  transition: transform 0.3s var(--sfs-ease);
+}
+.sfs-cta:hover .sfs-cta-arrow {
+  transform: translateX(3px);
+}
+/* The original's trailing "•", now a live status dot. */
+.sfs-live {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  border-radius: 50%;
+  background: var(--sfs-active-accent);
+}
+.sfs-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: sfs-pulse 2s ease-out infinite;
+}
+.sfs-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--sfs-text-2);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.sfs-secondary:hover {
+  color: var(--sfs-text);
+}
+.sfs-secondary span {
+  transition: transform 0.25s var(--sfs-ease);
+}
+.sfs-secondary:hover span {
+  transform: translateX(3px);
+}
+.sfs-secondary:focus-visible {
+  outline: 2px solid var(--sfs-active-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ---- The tiles ------------------------------------------------------------ */
+
+.sfs-grid {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sfs-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--sfs-card-radius);
+  background: var(--sfs-tile-bg);
+  color: #fff;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 1px 2px rgb(0 0 0 / 0.2),
+    0 24px 50px -28px rgb(0 0 0 / 0.55);
+  transform: scale(var(--sfs-scale, 1));
+  transition:
+    transform 0.4s var(--sfs-ease),
+    box-shadow 0.4s ease;
+}
+.sfs-media {
+  position: absolute;
+  inset: -8px; /* room for the parallax */
+  translate: calc(var(--px, 0) * 6px) calc(var(--py, 0) * 6px);
+  transition: translate 0.5s var(--sfs-ease);
+}
+.sfs-media img,
+.sfs-media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(var(--sfs-sat, 1));
+  /* Ken Burns as a transition, so it also eases back out when the tile loses the spotlight. */
+  transform: scale(var(--sfs-zoom, 1));
+  transition:
+    transform 1.2s var(--sfs-ease),
+    filter 0.4s ease;
+}
+/* Two stacked scrims, short and strong plus long and soft, so captions read on any photo. */
+.sfs-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgb(0 0 0 / 0.72), rgb(0 0 0 / 0.38) 22%, transparent 46%),
+    linear-gradient(to top, rgb(0 0 0 / 0.32), transparent 80%);
+  pointer-events: none;
+}
+/* Dims the tiles outside the spotlight (a veil, not opacity, so the glass pills keep blurring). */
+.sfs-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--sfs-veil-color);
+  opacity: var(--sfs-veil, 0);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.sfs-sheen {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 30%), rgb(255 255 255 / 0.16), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.sfs-tile:hover .sfs-sheen {
+  opacity: 1;
+}
+/* 1px gradient border, brightened by the feature's accent in the spotlight. */
+.sfs-tile::before,
+.sfs-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+.sfs-tile::before {
+  background: linear-gradient(145deg, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0.04) 45%, rgb(255 255 255 / 0.1));
+}
+.sfs-tile::after {
+  background: linear-gradient(145deg, color-mix(in oklab, var(--accent) 90%, white), color-mix(in oklab, var(--accent) 25%, transparent) 50%, color-mix(in oklab, var(--accent) 70%, transparent));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.sfs-tile-top {
+  position: absolute;
+  inset: 16px 16px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+.sfs-glass {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  -webkit-backdrop-filter: blur(var(--sfs-pill-blur)) saturate(150%);
+  backdrop-filter: blur(var(--sfs-pill-blur)) saturate(150%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.15),
+    inset 0 1px 0 rgb(255 255 255 / 0.18);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.sfs-icon {
+  width: 32px;
+  padding: 0;
+  justify-content: center;
+}
+.sfs-icon svg {
+  width: 16px;
+  height: 16px;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sfs-glass {
+    background: rgb(17 17 19 / 0.78);
+  }
+}
+
+.sfs-caption {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 18px;
+  pointer-events: none;
+  transform: translateY(calc(var(--desc-h, 2.6rem) + 8px));
+  transition: transform 0.45s var(--sfs-ease);
+}
+.sfs-caption-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.sfs-open {
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s var(--sfs-ease);
+}
+.sfs-tile:hover .sfs-open,
+.sfs-tile:focus-within .sfs-open {
+  opacity: 1;
+  transform: none;
+}
+.sfs-caption-desc {
+  margin: 6px 0 0;
+  max-width: 30rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: rgb(255 255 255 / 0.72);
+  text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+/* The whole tile is the link (or button); its focus ring sits inside the tile. */
+.sfs-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  cursor: pointer;
+}
+.sfs-hit:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+.sfs-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* In the spotlight / out of it (set by the script; without it every tile looks active). */
+.sfs-js .sfs[data-ready] .sfs-tile {
+  --sfs-scale: 0.98;
+  --sfs-veil: var(--sfs-veil-dim);
+  --sfs-sat: 0.6;
+}
+.sfs-js .sfs[data-ready] .sfs-tile[data-active] {
+  --sfs-scale: 1.02;
+  --sfs-veil: 0;
+  --sfs-sat: 1;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 1px 2px rgb(0 0 0 / 0.2),
+    0 30px 70px -26px color-mix(in oklab, var(--accent) 55%, transparent);
+}
+.sfs-tile[data-active]::after {
+  opacity: 1;
+}
+.sfs-tile[data-active] .sfs-caption {
+  transform: translateY(-4px);
+}
+.sfs-tile[data-active] .sfs-caption-desc {
+  opacity: 1;
+}
+.sfs[data-kenburns="on"] .sfs-tile[data-active] .sfs-media img,
+.sfs[data-kenburns="on"] .sfs-tile[data-active] .sfs-media video {
+  --sfs-zoom: 1.08;
+  transition:
+    transform 8s cubic-bezier(0.25, 0.1, 0.25, 1),
+    filter 0.4s ease;
+}
+
+/* ---- Layouts -------------------------------------------------------------- */
+
+.sfs-layout {
+  display: grid;
+  gap: 56px;
+}
+@media (min-width: 1024px) {
+  .sfs-layout {
+    grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+    gap: 64px;
+    align-items: center;
+  }
+}
+
+/* Phones: the tiles become a horizontal snap strip. */
+@media (max-width: 767px) {
+  .sfs-grid {
+    display: flex;
+    gap: 12px;
+    margin-inline: -24px;
+    padding: 6px 24px 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 24px;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .sfs-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .sfs-tile {
+    flex: 0 0 85%;
+    aspect-ratio: 4 / 5;
+    scroll-snap-align: center;
+  }
+}
+/* Tablets: a 2 × 2 grid. */
+@media (min-width: 768px) {
+  .sfs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+  }
+  .sfs-tile {
+    aspect-ratio: 1 / 1;
+  }
+}
+/* Desktops: the bento (one tall tile, one wide), or the plain grid with layout: "grid". */
+@media (min-width: 1024px) {
+  .sfs-grid[data-layout="bento"] {
+    grid-template-rows: 1fr 1fr 1.3fr;
+    aspect-ratio: 10 / 11;
+  }
+  .sfs-grid[data-layout="bento"] .sfs-tile {
+    aspect-ratio: auto;
+  }
+  .sfs-grid[data-layout="bento"] .sfs-tile:nth-child(1) {
+    grid-row: span 2;
+  }
+  .sfs-grid[data-layout="bento"] .sfs-tile:nth-child(4) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- Reveal on scroll ----------------------------------------------------- */
+
+.sfs-js .sfs:not([data-revealed]) [data-sfs-reveal],
+.sfs-js .sfs:not([data-revealed]) .sfs-step {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.sfs-js .sfs:not([data-revealed]) .sfs-tile {
+  opacity: 0;
+  --sfs-scale: 0.96;
+}
+[data-sfs-reveal],
+.sfs-js .sfs .sfs-step {
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s var(--sfs-ease);
+}
+.sfs[data-revealing] [data-sfs-reveal] {
+  transition-delay: calc(var(--k, 0) * 90ms);
+}
+.sfs[data-revealing] .sfs-step {
+  transition-delay: calc(500ms + var(--k, 0) * 80ms);
+}
+.sfs[data-revealing] .sfs-tile {
+  transition:
+    opacity 0.7s ease calc(650ms + var(--k, 0) * 90ms),
+    transform 0.7s var(--sfs-ease) calc(650ms + var(--k, 0) * 90ms),
+    box-shadow 0.4s ease;
+}
+
+/* ---- Without JavaScript --------------------------------------------------- */
+
+:where(html:not(.sfs-js)) .sfs-caption {
+  transform: none;
+}
+:where(html:not(.sfs-js)) .sfs-caption-desc {
+  opacity: 1;
+}
+:where(html:not(.sfs-js)) .sfs-step-progress,
+:where(html:not(.sfs-js)) .sfs-connector {
+  display: none;
+}
+
+/* ---- Reduced motion: no autoplay, Ken Burns, parallax, magnet or shimmer -- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sfs-eyebrow-dot::after,
+  .sfs-live::after,
+  .sfs-gradient,
+  .sfs-cta:hover::before {
+    animation: none;
+  }
+  .sfs-media {
+    translate: none;
+  }
+  .sfs-cta {
+    translate: none;
+  }
+  .sfs-tile,
+  .sfs-step,
+  [data-sfs-reveal],
+  .sfs-word > span {
+    transform: none !important;
+  }
+  .sfs-connector,
+  .sfs-caption {
+    transition: none;
+  }
+}

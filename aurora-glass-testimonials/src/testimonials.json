@@ -1,0 +1,77 @@
+{
+  "product": "Your product",
+  "aggregate": { "rating": 4.9, "count": 1240 },
+  "reviews": [
+    {
+      "id": "maya-okafor",
+      "quote": "We replaced three tools with one, and our release notes finally write themselves. The whole team felt the difference in the first week.",
+      "name": "Maya Okafor",
+      "role": "Head of Product",
+      "company": "Fieldnote",
+      "avatar": "avatars/maya-okafor.jpg",
+      "rating": 5,
+      "verified": true,
+      "source": "Customer survey",
+      "date": "2026-09-14"
+    },
+    {
+      "id": "daniel-reyes",
+      "quote": "Setup took an afternoon, not a sprint. Our on-call load dropped by a third, and nobody misses the old dashboards.",
+      "name": "Daniel Reyes",
+      "role": "Engineering Manager",
+      "company": "Parcelry",
+      "avatar": "avatars/daniel-reyes.jpg",
+      "rating": 5,
+      "verified": true,
+      "source": "In-app review",
+      "date": "2026-08-27"
+    },
+    {
+      "id": "aiko-tanaka",
+      "quote": "It is the rare tool that designers and engineers both open without being asked. Handoffs went from a meeting to a link.",
+      "name": "Aiko Tanaka",
+      "role": "Design Lead",
+      "company": "Lumora",
+      "avatar": "avatars/aiko-tanaka.jpg",
+      "rating": 5,
+      "verified": true,
+      "source": "Case study",
+      "date": "2026-08-03"
+    },
+    {
+      "id": "omar-haddad",
+      "quote": "As a five-person company we can't afford busywork. This gave us back roughly a day a week, every week.",
+      "name": "Omar Haddad",
+      "role": "Founder",
+      "company": "Brightwell",
+      "avatar": "avatars/omar-haddad.jpg",
+      "rating": 5,
+      "verified": true,
+      "source": "Customer interview",
+      "date": "2026-07-19"
+    },
+    {
+      "id": "priya-raman",
+      "quote": "Our campaign reviews used to live in screenshots and long threads. Now every decision sits in one place, on the record.",
+      "name": "Priya Raman",
+      "role": "VP Marketing",
+      "company": "Northstack",
+      "avatar": "avatars/priya-raman.jpg",
+      "rating": 4,
+      "verified": true,
+      "source": "Customer survey",
+      "date": "2026-06-30"
+    },
+    {
+      "id": "lukas-becker",
+      "quote": "Fast, quiet and predictable: exactly how infrastructure should feel. We stopped thinking about it, which is the highest compliment.",
+      "name": "Lukas Becker",
+      "role": "CTO",
+      "company": "Kiln & Co",
+      "rating": 5,
+      "verified": false,
+      "source": "Community forum",
+      "date": "2026-06-12"
+    }
+  ]
+}
