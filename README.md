@@ -1,8 +1,8 @@
 # Free React, Tailwind CSS and React Native components by UpFork
 
-Eighteen free, MIT-licensed components from [UpFork](https://upfork.dev). Three are React components that you add
+Twenty-two free, MIT-licensed components from [UpFork](https://upfork.dev). Three are React components that you add
 to a React + Tailwind project with the shadcn CLI, with no account, token or setup. Three are sections in a single
-HTML file each, with no framework. Twelve are React Native components for Expo apps, each a small app you can run. Every one
+HTML file each, with no framework. Sixteen are React Native components for Expo apps, each a small app you can run. Every one
 has a live preview on upfork.dev, in light and dark: the web ones at phone, tablet and desktop width, the mobile ones
 in a phone you use with the mouse, or with your finger on your own phone.
 
@@ -26,6 +26,10 @@ in a phone you use with the mouse, or with your finger on your own phone.
 | [Toast Stack](#toast-stack) | Stacked, swipeable toasts you call from anywhere | React Native, Expo |
 | [Clockface](#clockface) | Time picker where a wheel and a live clock move as one | React Native, Expo |
 | [Ambient Carousel](#ambient-carousel) | Cover flow with a glow in the front cover's colours | React Native, Expo |
+| [Morph Text](#morph-text) | Letters that glide to their new places, numbers that roll | React Native, Expo |
+| [Filmstrip](#filmstrip) | Photo viewer with a squeeze strip of thumbnails | React Native, Expo |
+| [Depth Drawer](#depth-drawer) | Side menu the screen steps back from, in four styles | React Native, Expo |
+| [Confirm Button](#confirm-button) | Two-step delete with a liquid cancel bubble, or hold to confirm | React Native, Expo |
 
 ## React components
 
@@ -363,6 +367,82 @@ npx expo install @shopify/react-native-skia react-native-reanimated react-native
 ```
 
 [Live preview](https://upfork.dev/products/ambient-carousel-react-native) · [Source, demo app and docs](ambient-carousel)
+
+### Morph Text
+
+<a href="https://upfork.dev/products/morph-text-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/morph-text-react-native-dark.webp">
+    <img alt="Morph Text: a potter's profile with Follow and Subscribed buttons, a rolling follower count and a swap card" src=".github/previews/morph-text-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+Text that changes in place instead of blinking: when a label changes, the letters both strings share glide to
+their new places, removed ones leave and new ones rise in, never drawn over each other. Odometer numbers formatted
+by `Intl`, a button that morphs through loading, success and error, and Persian and Arabic that stay joined.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/morph-text-react-native) · [Source, demo app and docs](morph-text)
+
+### Filmstrip
+
+<a href="https://upfork.dev/products/filmstrip-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/filmstrip-react-native-dark.webp">
+    <img alt="Filmstrip: a photo of a city at dusk above a strip of thumbnails, the current one open between slivers" src=".github/previews/filmstrip-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+The gallery from a phone's photo app: a big viewer, and a strip where the current photo opens to its true shape
+between slivers of the others. Scrub the strip and the viewer follows frame by frame; swipe the viewer and the
+strip follows. No stretching, double-tap zoom, video chapters, and 500 items as smooth as 5.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-gesture-handler react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/filmstrip-react-native) · [Source, demo app and docs](filmstrip)
+
+### Depth Drawer
+
+<a href="https://upfork.dev/products/depth-drawer-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/depth-drawer-react-native-dark.webp">
+    <img alt="Depth Drawer: a finance app's menu, the screen behind it shrunk, rounded and moved aside with faint copies behind" src=".github/previews/depth-drawer-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A side menu where the screen steps back into depth: it shrinks and moves aside with ghost layers behind it,
+swings back like a door, slides, or stays under a floating menu card. One progress scrubs everything from the
+first pixel of an edge swipe, the menu's entrance and a menu button whose bars turn into a close mark.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-gesture-handler react-native-svg expo-haptics expo-status-bar react-native-safe-area-context
+```
+
+[Live preview](https://upfork.dev/products/depth-drawer-react-native) · [Source, demo app and docs](depth-drawer)
+
+### Confirm Button
+
+<a href="https://upfork.dev/products/confirm-button-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/confirm-button-react-native-dark.webp">
+    <img alt="Confirm Button: a settings screen's danger zone, one button armed with a round cancel bubble beside it" src=".github/previews/confirm-button-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A button for actions that mustn't happen by accident: one press arms it and a cancel bubble buds off on a
+liquid neck that stretches and snaps; a second press confirms through busy, done and error, driven by your
+promise. It disarms itself with a countdown, or hold to confirm with a liquid fill. Skia, crisp edges.
+
+```bash
+npx expo install @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/confirm-button-react-native) · [Source, demo app and docs](confirm-button)
 
 ## Running a demo
 

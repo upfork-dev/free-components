@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Confirm Button",
+    "slug": "confirm-button",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

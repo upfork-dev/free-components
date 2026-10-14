@@ -1,0 +1,546 @@
+// Fourteen landscapes, one formula each: the demos' pictures. Rendered once by art/render.mjs into
+// assets/scenes/*.webp. Uniforms: res (the picture's size in px) and scene (0-13).
+uniform float2 res;
+uniform float scene;
+
+float3 rgb(float r, float g, float b) { return float3(r, g, b) / 255.0; }
+
+float hash11(float x) {
+  x = fract(x * 0.1031);
+  x *= x + 33.33;
+  x *= x + x;
+  return fract(x);
+}
+
+float hash12(float2 p) {
+  float3 p3 = fract(float3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+float noise1(float x) {
+  float i = floor(x);
+  float f = fract(x);
+  float u = f * f * (3.0 - 2.0 * f);
+  return mix(hash11(i), hash11(i + 1.0), u) * 2.0 - 1.0;
+}
+
+float noise2(float2 p) {
+  float2 i = floor(p);
+  float2 f = fract(p);
+  float2 u = f * f * (3.0 - 2.0 * f);
+  float a = hash12(i);
+  float b = hash12(i + float2(1.0, 0.0));
+  float c = hash12(i + float2(0.0, 1.0));
+  float d = hash12(i + float2(1.0, 1.0));
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float fbm1(float x) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 5; i++) {
+    v += a * noise1(x);
+    x = x * 2.07 + 13.1;
+    a *= 0.5;
+  }
+  return v;
+}
+
+// Ridged noise: sharp crests, for rock.
+float rfbm1(float x) {
+  float v = 0.0;
+  float a = 0.55;
+  for (int i = 0; i < 6; i++) {
+    v += a * (1.0 - abs(noise1(x)));
+    x = x * 2.11 + 7.3;
+    a *= 0.5;
+  }
+  return v;
+}
+
+float rfbmLo(float x) {
+  float v = 0.0;
+  float a = 0.55;
+  for (int i = 0; i < 3; i++) {
+    v += a * (1.0 - abs(noise1(x)));
+    x = x * 2.11 + 7.3;
+    a *= 0.5;
+  }
+  return v;
+}
+
+float fbm2(float2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 5; i++) {
+    v += a * noise2(p);
+    p = p * 2.03 + float2(17.1, 9.2);
+    a *= 0.5;
+  }
+  return v;
+}
+
+float3 grad3(float t, float3 a, float3 b, float3 c, float m) {
+  return t < m ? mix(a, b, smoothstep(0.0, m, t)) : mix(b, c, smoothstep(m, 1.0, t));
+}
+
+float3 sun(float3 c, float2 p, float asp, float2 at, float r, float3 col, float glow) {
+  float d = length((p - at) * float2(asp, 1.0));
+  c += col * exp(-d * d / (glow * glow)) * 0.55;
+  c = mix(c, col, smoothstep(r, r * 0.86, d));
+  return c;
+}
+
+// ---- 0: dunes at dusk ----
+float duneH(float x, float base, float amp, float f, float ph) {
+  float s = abs(sin(x * f + ph));
+  return base - amp * (1.0 - pow(s, 0.75)) - amp * 0.25 * sin(x * f * 0.37 + ph * 2.1);
+}
+float3 dunes(float2 p, float asp) {
+  float3 c = grad3(p.y / 0.56, rgb(48.0, 42.0, 98.0), rgb(214.0, 120.0, 98.0), rgb(252.0, 205.0, 140.0), 0.55);
+  c = sun(c, p, asp, float2(0.68, 0.49), 0.05, rgb(255.0, 238.0, 196.0), 0.2);
+  float3 haze = rgb(236.0, 160.0, 118.0);
+  for (int i = 0; i < 4; i++) {
+    float t = float(i) / 3.0;
+    float base = 0.58 + 0.12 * t + 0.02 * t * t;
+    float amp = 0.035 + 0.06 * t;
+    float f = 7.0 - 3.5 * t;
+    float ph = float(i) * 1.7 + 0.4;
+    float y = duneH(p.x, base, amp, f, ph);
+    if (p.y > y) {
+      float slope = duneH(p.x + 0.002, base, amp, f, ph) - y;
+      float lit = smoothstep(-0.0004, 0.0004, slope);
+      float3 shade = mix(rgb(120.0, 52.0, 44.0), rgb(78.0, 34.0, 38.0), t);
+      float3 light = mix(rgb(235.0, 150.0, 96.0), rgb(214.0, 112.0, 66.0), t);
+      float3 col = mix(shade, light, lit);
+      col *= 1.0 - 0.25 * smoothstep(0.0, 0.25, p.y - y);
+      c = mix(col, haze, 0.55 * (1.0 - t));
+    }
+  }
+  return c;
+}
+
+// ---- 1: alpine lake ----
+float3 alpineUpper(float2 p, float asp) {
+  float3 c = mix(rgb(116.0, 172.0, 226.0), rgb(222.0, 238.0, 248.0), smoothstep(0.0, 0.5, p.y));
+  float cl = smoothstep(0.55, 0.78, fbm2(p * float2(2.4, 7.0) + float2(3.0, 1.0)));
+  c = mix(c, float3(1.0), cl * 0.7 * (1.0 - smoothstep(0.1, 0.42, p.y)));
+  float far = 0.46 - 0.2 * rfbm1(p.x * 2.4 + 3.0);
+  if (p.y > far) {
+    // Faces turned to the morning sun (on the right) are lit: from the broad shape, not the detail.
+    float xs = p.x - 0.3 * (p.y - far) + 0.01 * noise1(p.y * 16.0);
+    float face = rfbmLo((xs - 0.01) * 2.4 + 3.0) - rfbmLo((xs + 0.01) * 2.4 + 3.0);
+    float lit = smoothstep(-0.025, 0.025, face);
+    float d = p.y - far;
+    float3 rock = mix(rgb(104.0, 128.0, 166.0), rgb(152.0, 172.0, 202.0), lit);
+    rock *= 0.92 + 0.08 * noise2(float2(p.x * 50.0, p.y * 8.0));
+    float edge = 0.035 + 0.05 * fbm2(float2(p.x * 14.0, p.y * 5.0));
+    float snow = (1.0 - smoothstep(edge, edge + 0.012, d)) * smoothstep(0.31, 0.22, far);
+    float3 white = mix(rgb(196.0, 210.0, 232.0), rgb(250.0, 252.0, 255.0), lit);
+    c = mix(rock, white, snow);
+    c = mix(c, rgb(190.0, 214.0, 236.0), 0.25);
+  }
+  float near = 0.52 - 0.1 * rfbm1(p.x * 3.3 + 11.0);
+  if (p.y > near) {
+    float xs = p.x - 0.4 * (p.y - near) + 0.008 * noise1(p.y * 20.0);
+    float face = rfbmLo((xs - 0.01) * 3.3 + 11.0) - rfbmLo((xs + 0.01) * 3.3 + 11.0);
+    c = mix(rgb(60.0, 84.0, 102.0), rgb(92.0, 118.0, 132.0), smoothstep(-0.03, 0.03, face));
+    c *= 1.0 - 0.3 * smoothstep(0.0, 0.1, p.y - near);
+  }
+  float id = floor(p.x * 70.0);
+  float teeth = abs(fract(p.x * 70.0) - 0.5) * 2.0;
+  float trees = 0.538 - 0.026 * (1.0 - teeth) * (0.55 + 0.45 * hash11(id));
+  if (p.y > trees) c = rgb(26.0, 50.0, 42.0) * (0.85 + 0.15 * noise2(p * float2(300.0, 60.0)));
+  return c;
+}
+float3 alpine(float2 p, float asp) {
+  float shore = 0.56;
+  if (p.y < shore) return alpineUpper(p, asp);
+  float d = p.y - shore;
+  float wob = 0.004 * sin(p.y * 260.0 + noise1(p.x * 40.0) * 3.0) * smoothstep(0.0, 0.2, d);
+  float3 c = alpineUpper(float2(p.x + wob, shore - d * 1.15), asp);
+  c = mix(c, rgb(30.0, 74.0, 92.0), 0.35 + 0.35 * smoothstep(0.0, 0.4, d));
+  c += 0.06 * smoothstep(0.7, 1.0, noise2(float2(p.x * 40.0, p.y * 400.0)));
+  return c;
+}
+
+// ---- 2: foggy forest ----
+float3 forest(float2 p, float asp) {
+  float3 fog = mix(rgb(208.0, 218.0, 212.0), rgb(228.0, 233.0, 228.0), p.y);
+  float3 c = fog;
+  float shaft = smoothstep(0.22, 0.0, abs((p.x - 0.2) - p.y * 0.45)) * (1.0 - p.y);
+  c += float3(1.0, 0.98, 0.9) * shaft * 0.14;
+  for (int i = 0; i < 5; i++) {
+    float t = float(i) / 4.0;
+    float cw = (0.07 + 0.12 * t) / asp;
+    float id = floor(p.x / cw + float(i) * 7.3);
+    float u = fract(p.x / cw + float(i) * 7.3) - 0.5;
+    float base = 0.5 + 0.12 * t + 0.42 * t * t;
+    float th = (0.2 + 0.16 * hash11(id + float(i) * 31.0)) * (0.8 + 1.5 * t);
+    float top = base - th;
+    float k = clamp((p.y - top) / th, 0.0, 1.0);
+    float tiers = 0.8 + 0.2 * step(0.5, fract(k * (6.0 + 2.0 * t)));
+    float hw = k * 0.5 * tiers * 0.95;
+    bool tree = p.y > top && abs(u) < hw && hash11(id * 3.1 + float(i)) > 0.1;
+    bool trunk = abs(u) < 0.035 && p.y > base - 0.02;
+    bool ground = p.y > base + 0.012 * noise1(p.x * 20.0);
+    if (tree || trunk || ground) {
+      float3 dark = mix(rgb(164.0, 180.0, 172.0), rgb(24.0, 40.0, 34.0), pow(t, 1.05));
+      dark *= 0.94 + 0.06 * noise2(p * float2(80.0, 160.0));
+      c = mix(dark, fog, 0.12 * (1.0 - t));
+    }
+    c = mix(c, fog, 0.22 * smoothstep(base - 0.06, base + 0.05, p.y) * (1.0 - t) * step(p.y, base + 0.2));
+  }
+  return c;
+}
+
+// ---- 3: sea cliffs ----
+float3 cliffs(float2 p, float asp) {
+  float hz = 0.52;
+  float3 c = grad3(p.y / hz, rgb(58.0, 72.0, 140.0), rgb(232.0, 138.0, 112.0), rgb(255.0, 214.0, 160.0), 0.62);
+  float2 sc = float2(0.78, 0.5);
+  c = sun(c, p, asp, sc, 0.045, rgb(255.0, 230.0, 180.0), 0.18);
+  if (p.y > hz) {
+    float d = p.y - hz;
+    c = mix(rgb(70.0, 98.0, 140.0), rgb(26.0, 48.0, 82.0), smoothstep(0.0, 0.45, d));
+    float waves = noise2(float2(p.x * 30.0, d * 300.0 / (d * 8.0 + 0.2)));
+    c += 0.05 * waves;
+    float spread = 0.02 + d * 0.5;
+    float glit = exp(-pow((p.x - sc.x) * asp / spread, 2.0)) * smoothstep(0.55, 0.9, noise2(float2(p.x * 160.0, d * 900.0)));
+    c += rgb(255.0, 214.0, 150.0) * glit * 0.9;
+  }
+  float far = hz - 0.025 * smoothstep(0.08, 0.0, abs(p.x - 0.62)) - 0.018 * smoothstep(0.05, 0.0, abs(p.x - 0.55));
+  if (p.y > far && p.y < hz + 0.004) c = mix(c, rgb(84.0, 64.0, 92.0), 0.85);
+  float top = 0.24 + 0.03 * noise1(p.x * 6.0);
+  float edge = 0.42 - 0.18 * (p.y - 0.24) + 0.035 * fbm1(p.y * 9.0) + 0.02 * fbm1(p.y * 40.0);
+  if (p.x < edge && p.y > top) {
+    float strata = 0.5 + 0.5 * sin(p.y * 70.0 + 2.0 * fbm1(p.x * 8.0));
+    float3 rock = mix(rgb(84.0, 58.0, 54.0), rgb(110.0, 76.0, 66.0), strata);
+    float rim = smoothstep(0.06, 0.0, edge - p.x);
+    rock = mix(rock, rgb(214.0, 132.0, 90.0), rim * 0.75);
+    rock *= 1.0 - 0.35 * smoothstep(0.5, 1.0, p.y);
+    float grass = smoothstep(0.03, 0.012, p.y - top);
+    c = mix(rock, mix(rgb(78.0, 104.0, 54.0), rgb(150.0, 160.0, 70.0), rim), grass);
+    float foam = smoothstep(0.02, 0.0, abs(p.x - edge + 0.004)) * smoothstep(0.8, 0.95, p.y);
+    c = mix(c, float3(0.95), foam * 0.6);
+  }
+  return c;
+}
+
+// ---- 4: city at dusk ----
+float3 cityUpper(float2 p, float asp) {
+  float3 c = grad3(p.y / 0.56, rgb(24.0, 34.0, 84.0), rgb(124.0, 84.0, 130.0), rgb(248.0, 170.0, 120.0), 0.6);
+  float2 g = floor(p * float2(asp, 1.0) * 140.0);
+  c += step(0.994, hash12(g)) * 0.7 * (1.0 - smoothstep(0.0, 0.32, p.y));
+  float hill = 0.52 - 0.06 * sin(p.x * 3.0 + 0.6) - 0.025 * sin(p.x * 7.0 + 2.0);
+  // Two rows of houses on the hill: the back row taller and hazier.
+  for (int r = 0; r < 2; r++) {
+    float back = 1.0 - float(r);
+    float cell = (0.028 + 0.014 * hash11(floor(p.x * 30.0) + float(r) * 9.0)) * (1.0 - 0.25 * back);
+    float id = floor(p.x / cell + float(r) * 0.5);
+    float u = fract(p.x / cell + float(r) * 0.5);
+    float bh = (0.035 + 0.045 * hash11(id * 1.3 + float(r))) * (1.0 + 0.5 * back);
+    float base = hill + 0.012 * float(r);
+    float roof = base - bh - 0.01 * back;
+    float gable = roof - 0.012 * (1.0 - abs(u - 0.5) * 2.0) * step(0.5, hash11(id * 4.7));
+    if (p.y > gable && u > 0.04 && u < 0.97) {
+      float3 wall = mix(rgb(70.0, 54.0, 88.0), rgb(48.0, 40.0, 70.0), hash11(id * 3.3));
+      wall = mix(wall, rgb(110.0, 84.0, 120.0), 0.35 * back);
+      float col = floor(u * 4.0);
+      float wu = fract(u * 4.0);
+      float row = floor((p.y - roof) * 90.0);
+      float wv = fract((p.y - roof) * 90.0);
+      float win = step(0.3, wu) * step(wu, 0.7) * step(0.35, wv) * step(wv, 0.8) * step(roof + 0.008, p.y);
+      float on = step(0.5, hash12(float2(id * 4.0 + col, row + float(r) * 50.0)));
+      c = wall + rgb(255.0, 204.0, 130.0) * win * on * (0.9 - 0.4 * back);
+    }
+  }
+  float dome = length((p - float2(0.36, hill - 0.1)) * float2(asp, 1.0));
+  if (dome < 0.035 && p.y < hill - 0.1 + 0.002) c = rgb(64.0, 50.0, 84.0);
+  if (abs(p.x - 0.36) < 0.03 / asp && p.y > hill - 0.1 && p.y < hill) c = rgb(64.0, 50.0, 84.0);
+  if (abs(p.x - 0.66) < 0.008 && p.y > hill - 0.16 && p.y < hill) c = rgb(58.0, 46.0, 78.0);
+  if (p.y > hill + 0.04) c = rgb(34.0, 28.0, 52.0);
+  return c;
+}
+float3 city(float2 p, float asp) {
+  float shore = 0.62;
+  if (p.y < shore) return cityUpper(p, asp);
+  float d = p.y - shore;
+  float wob = 0.006 * noise1(p.y * 120.0 + p.x * 2.0);
+  float3 c = cityUpper(float2(p.x + wob, shore - d * 1.4), asp);
+  c = mix(c * float3(0.75, 0.8, 1.0), rgb(20.0, 24.0, 52.0), 0.45 + 0.3 * smoothstep(0.0, 0.35, d));
+  c *= 0.85 + 0.15 * smoothstep(0.4, 0.6, noise2(float2(p.x * 8.0, p.y * 220.0)));
+  return c;
+}
+
+// ---- 5: aurora ----
+float3 auroraSky(float2 p, float asp) {
+  float3 c = mix(rgb(4.0, 8.0, 26.0), rgb(12.0, 34.0, 52.0), p.y);
+  float2 g = floor(p * float2(asp, 1.0) * 260.0);
+  float star = step(0.993, hash12(g)) * (0.5 + 0.5 * hash12(g + 3.0));
+  c += star * 0.8 * (1.0 - smoothstep(0.4, 0.7, p.y));
+  float yc = 0.34 + 0.07 * sin(p.x * 3.4 + 1.0) + 0.05 * fbm1(p.x * 3.0 + 4.0);
+  float up = exp(-pow(max(yc - p.y, 0.0) / 0.22, 2.0));
+  float down = exp(-pow(max(p.y - yc, 0.0) / 0.025, 2.0));
+  float band = (p.y < yc ? up : down);
+  float rays = 0.55 + 0.45 * noise1(p.x * 90.0 + 6.0 * fbm1(p.x * 4.0));
+  float h = clamp((yc - p.y) / 0.25, 0.0, 1.0);
+  float3 col = mix(rgb(70.0, 255.0, 168.0), rgb(146.0, 96.0, 250.0), h * h);
+  c += col * band * rays * 0.85;
+  return c;
+}
+float3 aurora(float2 p, float asp) {
+  float3 c = auroraSky(p, asp);
+  float ridge = 0.71 - 0.12 * rfbm1(p.x * 2.6 + 5.0);
+  if (p.y > ridge) {
+    // Faces lean with the slope below each crest, so light and shade don't fall in columns.
+    float xs = p.x + 0.35 * (p.y - ridge) + 0.012 * noise1(p.y * 14.0);
+    float face = rfbmLo((xs - 0.012) * 1.6 + 5.0) - rfbmLo((xs + 0.012) * 1.6 + 5.0);
+    float lit = smoothstep(-0.03, 0.03, -face);
+    float3 snow = mix(rgb(44.0, 62.0, 88.0), rgb(98.0, 134.0, 156.0), lit);
+    snow *= 0.92 + 0.08 * noise2(float2(p.x * 50.0, p.y * 8.0));
+    snow += rgb(40.0, 130.0, 96.0) * 0.3 * (1.0 - smoothstep(0.0, 0.08, p.y - ridge));
+    c = snow * (1.0 - 0.45 * smoothstep(0.0, 0.16, p.y - ridge));
+  }
+  float lake = 0.84;
+  if (p.y > lake) {
+    float d = p.y - lake;
+    float3 r = auroraSky(float2(p.x + 0.003 * noise1(p.y * 300.0), lake - d * 2.6), asp);
+    c = mix(r, rgb(10.0, 24.0, 36.0), 0.45 + 0.4 * smoothstep(0.0, 0.16, d));
+  }
+  return c;
+}
+
+// ---- 6: desert road ----
+float3 road(float2 p, float asp) {
+  float hz = 0.5;
+  float3 c = grad3(p.y / hz, rgb(30.0, 40.0, 100.0), rgb(98.0, 82.0, 140.0), rgb(236.0, 164.0, 124.0), 0.6);
+  float mesa = hz - 0.07 * clamp(sin(p.x * 9.0 + 1.0) * 3.0 - 1.4, 0.0, 1.0) - 0.045 * clamp(sin(p.x * 14.0 + 4.0) * 3.0 - 1.7, 0.0, 1.0);
+  if (p.y > mesa) c = mix(rgb(70.0, 46.0, 72.0), rgb(130.0, 90.0, 110.0), 0.35 * smoothstep(hz, mesa, p.y));
+  if (p.y > hz) {
+    float t = p.y - hz;
+    c = mix(rgb(160.0, 104.0, 82.0), rgb(98.0, 54.0, 42.0), smoothstep(0.0, 0.5, t));
+    c *= 0.9 + 0.1 * noise2(float2(p.x * 60.0 / (t + 0.05), t * 120.0));
+    float scrub = step(0.82, noise2(float2(p.x * 160.0, p.y * 220.0))) * smoothstep(0.0, 0.1, t);
+    c = mix(c, rgb(70.0, 56.0, 40.0), scrub * 0.6);
+    float hw = 0.42 * t / (1.0 - hz) + 0.003;
+    float dx = abs(p.x - 0.5);
+    if (dx < hw) {
+      c = mix(rgb(70.0, 64.0, 82.0), rgb(40.0, 38.0, 48.0), smoothstep(0.0, 0.4, t));
+      float z = 1.0 / (t + 0.004);
+      float dash = step(0.5, fract(z * 0.45)) * step(dx, hw * 0.035);
+      c = mix(c, rgb(242.0, 196.0, 90.0), dash);
+      float side = smoothstep(hw * 0.94, hw * 0.97, dx) * step(dx, hw * 0.995);
+      c = mix(c, rgb(230.0, 226.0, 220.0), side * 0.8);
+    }
+  }
+  return c;
+}
+
+// ---- 7: rice terraces ----
+float3 terraces(float2 p, float asp) {
+  float3 c = mix(rgb(226.0, 232.0, 222.0), rgb(206.0, 216.0, 204.0), p.y);
+  float far = 0.24 - 0.08 * fbm1(p.x * 2.0 + 1.0);
+  if (p.y > far) c = mix(rgb(150.0, 170.0, 150.0), c, 0.4);
+  float h = p.y + 0.14 * sin(p.x * 4.0 * asp * 0.75 + 0.8) + 0.05 * fbm2(p * 3.0) - 0.06 * sin(p.x * 9.0);
+  if (h > 0.34) {
+    float k = h * 15.0;
+    float band = floor(k);
+    float t = fract(k);
+    float3 green = mix(rgb(96.0, 146.0, 50.0), rgb(146.0, 186.0, 72.0), hash11(band * 7.1));
+    green *= 0.92 + 0.08 * noise2(p * float2(200.0, 40.0));
+    float lip = smoothstep(0.08, 0.0, t);
+    float shadow = smoothstep(0.08, 0.18, t) * (1.0 - smoothstep(0.18, 0.4, t));
+    c = mix(green, rgb(210.0, 228.0, 206.0), lip * 0.85);
+    c *= 1.0 - 0.18 * shadow;
+    c = mix(c, rgb(226.0, 232.0, 222.0), 0.5 * (1.0 - smoothstep(0.34, 0.55, h)));
+  }
+  return c;
+}
+
+// ---- 8: lavender field ----
+float3 lavender(float2 p, float asp) {
+  float hz = 0.46;
+  float3 c = grad3(p.y / hz, rgb(86.0, 60.0, 140.0), rgb(232.0, 144.0, 160.0), rgb(255.0, 216.0, 166.0), 0.58);
+  c = sun(c, p, asp, float2(0.3, 0.44), 0.04, rgb(255.0, 236.0, 200.0), 0.22);
+  float2 tc = float2(0.73, hz - 0.075);
+  float canopy = length((p - tc) * float2(asp, 1.25)) - 0.055 - 0.012 * noise2(p * 60.0);
+  float trunk = step(abs(p.x - 0.73), 0.0035) * step(tc.y, p.y) * step(p.y, hz + 0.004);
+  if (canopy < 0.0 || trunk > 0.5) c = rgb(44.0, 34.0, 58.0);
+  if (p.y > hz) {
+    float t = p.y - hz;
+    float u = (p.x - 0.45) / (t + 0.012);
+    float row = fract(u * 0.9);
+    float flower = smoothstep(0.12, 0.2, row) * smoothstep(0.88, 0.8, row);
+    float3 bloom = mix(rgb(124.0, 92.0, 190.0), rgb(160.0, 120.0, 214.0), noise2(float2(u * 3.0, t * 300.0)));
+    bloom *= 0.85 + 0.25 * smoothstep(0.6, 1.0, noise2(float2(p.x * 300.0, p.y * 300.0)));
+    float3 soil = rgb(64.0, 70.0, 56.0);
+    float3 ground = mix(soil, bloom, flower);
+    c = mix(mix(ground, rgb(196.0, 150.0, 190.0), 0.55 * (1.0 - smoothstep(0.0, 0.12, t))), ground * 0.8, smoothstep(0.3, 0.55, t));
+  }
+  return c;
+}
+
+// ---- 9: peaks at dawn ----
+float3 peaks(float2 p, float asp) {
+  float3 c = grad3(p.y / 0.62, rgb(36.0, 50.0, 102.0), rgb(180.0, 124.0, 168.0), rgb(248.0, 196.0, 180.0), 0.55);
+  float apex = 0.55;
+  float ridge = 0.2 + 0.9 * abs(p.x - apex) + 0.05 * rfbm1(p.x * 5.0 + 2.0) - 0.04;
+  float side = 0.44 + 0.55 * abs(p.x - 0.14) + 0.04 * rfbm1(p.x * 7.0);
+  float main = step(ridge, p.y);
+  float second = step(side, p.y);
+  if (main > 0.5 || second > 0.5) {
+    float cx = main > 0.5 ? apex : 0.14;
+    float top = main > 0.5 ? ridge : side;
+    // The face towards the dawn (right) glows; the other is in blue shadow. A soft seam between.
+    float lit = smoothstep(-0.012, 0.012, p.x - cx + 0.02 * noise1(p.y * 12.0));
+    float depth = smoothstep(0.0, 0.35, p.y - top);
+    float3 shade = mix(rgb(112.0, 126.0, 176.0), rgb(66.0, 76.0, 122.0), depth);
+    float3 glow = mix(rgb(255.0, 238.0, 228.0), rgb(236.0, 160.0, 150.0), depth);
+    c = mix(shade, glow, lit * (main > 0.5 ? 1.0 : 0.6));
+    // Gullies down the fall line: long, narrow, faint.
+    float gully = smoothstep(0.6, 0.85, noise2(float2(p.x * 46.0, p.y * 5.0)));
+    c *= 1.0 - 0.18 * gully * smoothstep(0.02, 0.1, p.y - top);
+  }
+  float valley = 0.74 + 0.03 * noise1(p.x * 8.0);
+  if (p.y > valley) {
+    c = mix(rgb(40.0, 50.0, 78.0), rgb(22.0, 28.0, 48.0), smoothstep(0.0, 0.2, p.y - valley));
+    float teeth = abs(fract(p.x * 45.0) - 0.5) * 2.0;
+    if (p.y < valley + 0.03 * (1.0 - teeth)) c = rgb(110.0, 104.0, 146.0);
+  }
+  c = mix(c, rgb(214.0, 186.0, 206.0), 0.3 * smoothstep(0.05, 0.0, abs(p.y - 0.73)));
+  return c;
+}
+
+// ---- 10: lagoon ----
+float3 lagoon(float2 p, float asp) {
+  float hz = 0.33;
+  float3 c = mix(rgb(70.0, 172.0, 236.0), rgb(196.0, 234.0, 250.0), smoothstep(0.0, hz, p.y));
+  float cl = smoothstep(0.52, 0.72, fbm2(p * float2(3.0, 7.0) + float2(1.0, 5.0)));
+  c = mix(c, float3(1.0), cl * 0.85 * smoothstep(0.05, 0.25, p.y) * (1.0 - smoothstep(0.26, 0.32, p.y)));
+  float isl = hz - 0.03 * smoothstep(0.16, 0.0, abs(p.x - 0.2)) - 0.012 * smoothstep(0.03, 0.0, abs(p.x - 0.14));
+  if (p.y > isl && p.y < hz + 0.002) c = rgb(40.0, 84.0, 60.0);
+  if (p.y > hz) {
+    float t = (p.y - hz) / (1.0 - hz);
+    float sandLine = 0.64 + 0.1 * sin(p.x * 3.4 + 1.2) + 0.03 * fbm1(p.x * 6.0);
+    float s = (p.y - sandLine);
+    float3 deep = mix(rgb(22.0, 118.0, 172.0), rgb(30.0, 186.0, 196.0), smoothstep(0.0, 0.5, t));
+    float shallow = smoothstep(0.12, 0.0, abs(s)) ;
+    float3 water = mix(deep, rgb(140.0, 226.0, 212.0), shallow);
+    float caust = smoothstep(0.55, 0.85, noise2(p * float2(40.0, 70.0) + fbm2(p * 8.0) * 3.0));
+    water += 0.08 * caust * (0.5 + shallow);
+    float sand = smoothstep(0.018, 0.0, abs(s) - 0.02);
+    c = mix(water, rgb(244.0, 228.0, 194.0), sand);
+    float wet = smoothstep(0.03, 0.0, abs(abs(s) - 0.035));
+    c = mix(c, rgb(208.0, 214.0, 190.0), wet * 0.5);
+  }
+  return c;
+}
+
+// ---- 11: canyon ----
+float3 canyon(float2 p, float asp) {
+  float3 c = mix(rgb(150.0, 200.0, 234.0), rgb(248.0, 222.0, 182.0), smoothstep(0.0, 0.32, p.y));
+  float left = 0.36 - 0.18 * (1.0 - p.y) + 0.05 * fbm1(p.y * 7.0) + 0.02 * fbm1(p.y * 30.0);
+  float right = 0.64 + 0.2 * (1.0 - p.y) + 0.05 * fbm1(p.y * 6.0 + 9.0) + 0.02 * fbm1(p.y * 34.0 + 3.0);
+  float farTop = 0.3 + 0.04 * noise1(p.x * 10.0);
+  if (p.y > farTop) c = mix(rgb(214.0, 150.0, 120.0), rgb(196.0, 120.0, 92.0), smoothstep(farTop, 0.6, p.y));
+  float bands = 0.5 + 0.5 * sin(p.y * 60.0 + 3.0 * fbm1(p.x * 3.0));
+  float3 strata = mix(rgb(180.0, 82.0, 46.0), rgb(222.0, 136.0, 82.0), bands);
+  strata = mix(strata, rgb(140.0, 58.0, 34.0), smoothstep(0.7, 0.9, noise2(float2(p.x * 4.0, p.y * 90.0))));
+  if (p.x < left) {
+    c = strata * (0.95 + 0.25 * smoothstep(0.06, 0.0, left - p.x));
+  } else if (p.x > right) {
+    c = strata * float3(0.5, 0.52, 0.62);
+    c = mix(c, c * 1.3, smoothstep(0.04, 0.0, p.x - right) * 0.5);
+  }
+  float river = 0.88 + 0.02 * sin(p.x * 20.0);
+  if (p.y > river && p.x > left - 0.02 && p.x < right + 0.02) {
+    c = mix(rgb(70.0, 120.0, 132.0), rgb(40.0, 84.0, 100.0), smoothstep(river, 1.0, p.y));
+    c += 0.1 * smoothstep(0.7, 0.95, noise2(float2(p.x * 60.0, p.y * 300.0)));
+  }
+  return c;
+}
+
+// ---- 12: harbour ----
+float3 harbourUpper(float2 p, float asp) {
+  float3 c = mix(rgb(248.0, 188.0, 118.0), rgb(242.0, 132.0, 92.0), smoothstep(0.0, 0.5, p.y));
+  c = sun(c, p, asp, float2(0.3, 0.42), 0.07, rgb(255.0, 236.0, 186.0), 0.25);
+  float hill = 0.5 - 0.06 * sin(p.x * 4.0 + 2.0) - 0.03 * fbm1(p.x * 5.0);
+  if (p.y > hill) {
+    c = mix(rgb(170.0, 104.0, 96.0), rgb(140.0, 86.0, 90.0), hash11(floor(p.x * 120.0)) * 0.3);
+    float houses = step(0.6, noise2(float2(p.x * 160.0, p.y * 90.0)));
+    c = mix(c, rgb(244.0, 210.0, 170.0), houses * 0.5 * (1.0 - smoothstep(0.0, 0.05, p.y - hill)));
+  }
+  return c;
+}
+float boat(float2 p, float asp, float2 at, float s) {
+  float2 q = (p - at) * float2(asp, 1.0) / s;
+  float hull = step(abs(q.x), 0.12 - q.y * 0.6) * step(0.0, q.y) * step(q.y, 0.05);
+  float mast = step(abs(q.x - 0.01), 0.004) * step(-0.28, q.y) * step(q.y, 0.0);
+  return max(hull, mast);
+}
+float3 harbour(float2 p, float asp) {
+  float shore = 0.55;
+  float3 c;
+  if (p.y < shore) {
+    c = harbourUpper(p, asp);
+  } else {
+    float d = p.y - shore;
+    float wob = 0.008 * noise1(p.y * 140.0 + p.x * 3.0);
+    c = harbourUpper(float2(p.x + wob, shore - d * 1.25), asp);
+    c = mix(c, rgb(46.0, 74.0, 104.0), 0.35 + 0.4 * smoothstep(0.0, 0.4, d));
+    float glit = exp(-pow((p.x - 0.3) * asp / (0.03 + d * 0.6), 2.0)) * smoothstep(0.5, 0.85, noise2(float2(p.x * 120.0, d * 700.0)));
+    c += rgb(255.0, 210.0, 150.0) * glit;
+  }
+  float b = max(max(boat(p, asp, float2(0.62, 0.66), 1.0), boat(p, asp, float2(0.8, 0.61), 0.7)), boat(p, asp, float2(0.47, 0.76), 1.25));
+  c = mix(c, rgb(34.0, 30.0, 44.0), b);
+  float pier = step(0.88, p.x) * step(0.6, p.y) * step(p.y, 0.62);
+  float posts = step(0.88, p.x) * step(fract(p.x * 60.0), 0.18) * step(0.6, p.y) * step(p.y, 0.72);
+  c = mix(c, rgb(40.0, 32.0, 40.0), max(pier, posts));
+  return c;
+}
+
+// ---- 13: autumn hills ----
+float3 autumn(float2 p, float asp) {
+  float3 c = mix(rgb(244.0, 228.0, 198.0), rgb(232.0, 200.0, 160.0), smoothstep(0.0, 0.5, p.y));
+  c = sun(c, p, asp, float2(0.82, 0.3), 0.03, rgb(255.0, 246.0, 222.0), 0.3);
+  for (int i = 0; i < 5; i++) {
+    float t = float(i) / 4.0;
+    float base = 0.4 + 0.13 * t;
+    float y = base - (0.06 + 0.04 * t) * sin(p.x * (3.0 + 2.0 * t) + float(i) * 1.9) - 0.03 * fbm1(p.x * 4.0 + float(i));
+    if (p.y > y) {
+      float3 near = mix(rgb(176.0, 84.0, 40.0), rgb(110.0, 44.0, 28.0), t);
+      float3 col = mix(rgb(206.0, 172.0, 136.0), near, 0.35 + 0.65 * t);
+      float leaves = noise2(p * float2(140.0, 160.0) * (0.6 + t));
+      float3 tint = mix(rgb(232.0, 150.0, 50.0), rgb(196.0, 70.0, 40.0), noise2(p * 20.0 + float(i)));
+      col = mix(col, mix(col, tint, 0.5), t) * (0.88 + 0.22 * leaves * t);
+      col *= 1.0 - 0.18 * smoothstep(0.0, 0.2, p.y - y);
+      c = col;
+    }
+  }
+  return c;
+}
+
+half4 main(float2 fragCoord) {
+  float2 p = fragCoord / res;
+  float asp = res.x / res.y;
+  float3 c;
+  if (scene < 0.5) c = dunes(p, asp);
+  else if (scene < 1.5) c = alpine(p, asp);
+  else if (scene < 2.5) c = forest(p, asp);
+  else if (scene < 3.5) c = cliffs(p, asp);
+  else if (scene < 4.5) c = city(p, asp);
+  else if (scene < 5.5) c = aurora(p, asp);
+  else if (scene < 6.5) c = road(p, asp);
+  else if (scene < 7.5) c = terraces(p, asp);
+  else if (scene < 8.5) c = lavender(p, asp);
+  else if (scene < 9.5) c = peaks(p, asp);
+  else if (scene < 10.5) c = lagoon(p, asp);
+  else if (scene < 11.5) c = canyon(p, asp);
+  else if (scene < 12.5) c = harbour(p, asp);
+  else c = autumn(p, asp);
+  // Fine grain: film-like, and it dithers the skies' long gradients.
+  c += (hash12(fragCoord * 1.37) - 0.5) * (3.0 / 255.0);
+  return half4(half3(clamp(c, 0.0, 1.0)), 1.0);
+}
