@@ -1,8 +1,8 @@
-# Free React + Tailwind CSS components by UpFork
+# Free React, Tailwind CSS and React Native components by UpFork
 
-Ten free, MIT-licensed components from [UpFork](https://upfork.dev). Three are React components that you add to a
-React + Tailwind project with the shadcn CLI, with no account, token or setup. Three are sections in a single HTML
-file each, with no framework. Four are React Native components for Expo apps, each a small app you can run. Every one
+Eighteen free, MIT-licensed components from [UpFork](https://upfork.dev). Three are React components that you add
+to a React + Tailwind project with the shadcn CLI, with no account, token or setup. Three are sections in a single
+HTML file each, with no framework. Twelve are React Native components for Expo apps, each a small app you can run. Every one
 has a live preview on upfork.dev, in light and dark: the web ones at phone, tablet and desktop width, the mobile ones
 in a phone you use with the mouse, or with your finger on your own phone.
 
@@ -18,6 +18,14 @@ in a phone you use with the mouse, or with your finger on your own phone.
 | [Swipe Deck](#swipe-deck) | Card stack to swipe left, right or up, with undo | React Native, Expo |
 | [Goal Ring](#goal-ring) | Progress ring with a glow, drawn with Skia, set by dragging | React Native, Expo |
 | [Slide to Confirm](#slide-to-confirm) | Slide-to-pay button with busy, done and error states | React Native, Expo |
+| [Focus Scroll](#focus-scroll) | List where only the item on the focal line is sharp | React Native, Expo |
+| [Gooey Tab Bar](#gooey-tab-bar) | Tab bar whose bubble flies between tabs on liquid necks | React Native, Expo |
+| [Lustre Cards](#lustre-cards) | Payment cards in live metal that tilt, flip and freeze | React Native, Expo |
+| [Choice Chips](#choice-chips) | Multi-select chips that fill from where you pressed | React Native, Expo |
+| [Arc Picker](#arc-picker) | Curved dial of items, like a camera's filter dial | React Native, Expo |
+| [Toast Stack](#toast-stack) | Stacked, swipeable toasts you call from anywhere | React Native, Expo |
+| [Clockface](#clockface) | Time picker where a wheel and a live clock move as one | React Native, Expo |
+| [Ambient Carousel](#ambient-carousel) | Cover flow with a glow in the front cover's colours | React Native, Expo |
 
 ## React components
 
@@ -204,6 +212,157 @@ npx expo install react-native-reanimated react-native-worklets react-native-gest
 ```
 
 [Live preview](https://upfork.dev/products/slide-to-confirm-react-native) · [Source, demo app and docs](slide-to-confirm)
+
+### Focus Scroll
+
+<a href="https://upfork.dev/products/focus-scroll-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/focus-scroll-react-native-dark.webp">
+    <img alt="Focus Scroll: song lyrics where only the current line is sharp, the lines around it blurred and dimmed" src=".github/previews/focus-scroll-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A scrolling list where only the item on the focal line is sharp: the rest blur, shrink, dim and lean away
+like a camera's depth of field. Karaoke lyrics with a sweeping fill, stories, timelines, all on one Skia canvas,
+with real blur on phones and on the web.
+
+```bash
+npx expo install @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/focus-scroll-react-native) · [Source, demo app and docs](focus-scroll)
+
+### Gooey Tab Bar
+
+<a href="https://upfork.dev/products/gooey-tab-bar-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/gooey-tab-bar-react-native-dark.webp">
+    <img alt="Gooey Tab Bar: a food delivery app above a tab bar whose focused tab floats in a liquid bubble" src=".github/previews/gooey-tab-bar-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A bottom tab bar whose focused tab rides in a liquid bubble: it pinches off its neck, flies over and a new
+neck grows to catch it where it lands. A notched cradle style, a centre button that blooms quick actions, and
+badges that pop. Crisp Skia geometry with real shadows.
+
+```bash
+npx expo install @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-safe-area-context react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/gooey-tab-bar-react-native) · [Source, demo app and docs](gooey-tab-bar)
+
+### Lustre Cards
+
+<a href="https://upfork.dev/products/lustre-cards-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/lustre-cards-react-native-dark.webp">
+    <img alt="Lustre Cards: a titanium payment card in front of a carousel of metal cards, its plan's perks below" src=".github/previews/lustre-cards-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+Payment cards in live metal (brushed steel, champagne gold, titanium, rose, a prism film and frosted glass)
+whose reflections slide as they turn, tilt and flip. A depth carousel, the card's back with a hold-to-reveal code,
+and a frost that freezes it. A Skia shader.
+
+```bash
+npx expo install @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/lustre-cards-react-native) · [Source, demo app and docs](lustre-cards)
+
+### Choice Chips
+
+<a href="https://upfork.dev/products/choice-chips-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/choice-chips-react-native-dark.webp">
+    <img alt="Choice Chips: an onboarding screen of interest chips, three picked in orange, above a Continue button" src=".github/previews/choice-chips-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+Choice chips that fill with colour from where you pressed, draw their check and reflow like sliding objects.
+Multiple or single choice, limits with a polite refusal, wrap, scroll and grid layouts, keyboard and screen
+readers.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/choice-chips-react-native) · [Source, demo app and docs](choice-chips)
+
+### Arc Picker
+
+<a href="https://upfork.dev/products/arc-picker-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/arc-picker-react-native-dark.webp">
+    <img alt="Arc Picker: a camera viewfinder of a lake at sunset with a curved dial of filter thumbnails at the bottom" src=".github/previews/arc-picker-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A curved dial carousel: items ride a true circular arc and the one under the ring is chosen. Momentum,
+detents and an exact landing, with a live fractional index: the camera demo blends its viewfinder between two
+filters as you turn, and the ring is its shutter.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-gesture-handler expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/arc-picker-react-native) · [Source, demo app and docs](arc-picker)
+
+### Toast Stack
+
+<a href="https://upfork.dev/products/toast-stack-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/toast-stack-react-native-dark.webp">
+    <img alt="Toast Stack: an inbox with a stack of toasts at the bottom, the front one saying Conversation archived, with Undo" src=".github/previews/toast-stack-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A complete toast system: `toast.success('Saved')` from anywhere, a collapsed stack that fans open, promise
+toasts whose spinner turns into a check, Undo actions, upload progress, swipe to dismiss and timers that pause
+while you read.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-gesture-handler react-native-svg react-native-safe-area-context expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/toast-stack-react-native) · [Source, demo app and docs](toast-stack)
+
+### Clockface
+
+<a href="https://upfork.dev/products/clockface-time-picker-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/clockface-time-picker-react-native-dark.webp">
+    <img alt="Clockface: booking a call, an analog clock showing the 14:00 to 15:00 arc above a wheel of times" src=".github/previews/clockface-time-picker-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A time picker where a wheel of times and a live analog clock move as one: wind the wheel and the hands
+sweep. Single times or ranges with the booked arc on the face, unavailable times skipped, and a minute hand you
+can drag.
+
+```bash
+npx expo install @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/clockface-time-picker-react-native) · [Source, demo app and docs](clockface-time-picker)
+
+### Ambient Carousel
+
+<a href="https://upfork.dev/products/ambient-carousel-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/ambient-carousel-react-native-dark.webp">
+    <img alt="Ambient Carousel: album covers in depth, the front one glowing red and violet behind it" src=".github/previews/ambient-carousel-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A cover-flow carousel: the cover in front faces you, its neighbours fold away in depth, and the stage glows in
+its colours, a drifting aura that melts from palette to palette in OKLab as you swipe.
+
+```bash
+npx expo install @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/ambient-carousel-react-native) · [Source, demo app and docs](ambient-carousel)
 
 ## Running a demo
 

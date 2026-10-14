@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Toast Stack",
+    "slug": "toast-stack",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

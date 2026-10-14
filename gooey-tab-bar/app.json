@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Gooey Tab Bar",
+    "slug": "gooey-tab-bar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Lustre Cards",
+    "slug": "lustre-cards",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

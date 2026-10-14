@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Choice Chips",
+    "slug": "choice-chips",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

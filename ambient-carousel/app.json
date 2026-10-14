@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Ambient Carousel",
+    "slug": "ambient-carousel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}
