@@ -17,6 +17,7 @@ import {
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
+  ReduceMotion,
   cancelAnimation,
   useAnimatedReaction,
   useAnimatedStyle,
@@ -408,7 +409,8 @@ const ToastItem = memo(function ToastItem({
     [id, gap, reduce],
   );
 
-  // Its timer: a value from 1 to 0 on the UI thread, which also draws the progress hairline.
+  // Its timer: a value from 1 to 0 on the UI thread, which also draws the progress hairline. A timer, not motion: it
+  // runs its full length with reduce motion on too (Reanimated would otherwise end it at once).
   const life = useSharedValue(1);
   const lastVersion = useRef(version);
   const counting = measured && !closing && index >= 0 && index < visible && Number.isFinite(duration) && !paused;
@@ -421,7 +423,8 @@ const ToastItem = memo(function ToastItem({
       cancelAnimation(life);
       return;
     }
-    life.value = withTiming(0, { duration: Math.max(0, life.value * duration), easing: Easing.linear }, (finished) => {
+    const left = Math.max(0, life.value * duration);
+    life.value = withTiming(0, { duration: left, easing: Easing.linear, reduceMotion: ReduceMotion.Never }, (finished) => {
       if (finished) scheduleOnRN(expireToast, id);
     });
     return () => cancelAnimation(life);
