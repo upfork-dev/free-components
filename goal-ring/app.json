@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Goal Ring",
+    "slug": "goal-ring",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Fluid Tab Bar",
+    "slug": "fluid-tab-bar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

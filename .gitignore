@@ -5,3 +5,6 @@ dist/
 *.tsbuildinfo
 .env*
 .DS_Store
+.expo/
+# Skia's web engine, copied in by npm install (setup-skia-web)
+canvaskit.wasm

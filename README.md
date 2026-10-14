@@ -1,9 +1,10 @@
 # Free React + Tailwind CSS components by UpFork
 
-Six free, MIT-licensed components from [UpFork](https://upfork.dev). Three are React components that you add to a
-React + Tailwind project with the shadcn CLI, with no account, token or setup. The other three are sections in a single
-HTML file each, with no framework. Every one has a live preview on upfork.dev, in light and dark, at phone, tablet
-and desktop width.
+Ten free, MIT-licensed components from [UpFork](https://upfork.dev). Three are React components that you add to a
+React + Tailwind project with the shadcn CLI, with no account, token or setup. Three are sections in a single HTML
+file each, with no framework. Four are React Native components for Expo apps, each a small app you can run. Every one
+has a live preview on upfork.dev, in light and dark: the web ones at phone, tablet and desktop width, the mobile ones
+in a phone you use with the mouse, or with your finger on your own phone.
 
 | Component | What it is | Kind |
 | --- | --- | --- |
@@ -13,6 +14,10 @@ and desktop width.
 | [Aurora Glass Testimonials](#aurora-glass-testimonials) | 3D stack of glass testimonial cards | HTML + Tailwind CSS |
 | [Pulse Bento Feature Highlights](#pulse-bento-feature-highlights) | Feature cards that are small live demos | HTML + Tailwind CSS |
 | [Spotlight Bento Feature Showcase](#spotlight-bento-feature-showcase) | Feature timeline linked to a bento grid of images | HTML + Tailwind CSS |
+| [Fluid Tab Bar](#fluid-tab-bar) | Floating tab bar whose highlight stretches like liquid | React Native, Expo |
+| [Swipe Deck](#swipe-deck) | Card stack to swipe left, right or up, with undo | React Native, Expo |
+| [Goal Ring](#goal-ring) | Progress ring with a glow, drawn with Skia, set by dragging | React Native, Expo |
+| [Slide to Confirm](#slide-to-confirm) | Slide-to-pay button with busy, done and error states | React Native, Expo |
 
 ## React components
 
@@ -120,6 +125,86 @@ the right. Point at either, or let autoplay run, and that feature takes the spot
 
 [Live preview](https://upfork.dev/products/spotlight-bento-grid-feature-section) · [Source and docs](spotlight-bento-feature-showcase)
 
+## React Native components
+
+Each folder is a small Expo app (SDK 57) with the component and its demos: run it in your browser or in Expo Go on
+your phone. To use a component in your own Expo app, copy its `components/` and `lib/` folders and install its
+packages with the line below (its README has the rest). Built with Reanimated 4, Gesture Handler and Skia, in light and
+dark, for a finger and for the mouse.
+
+### Fluid Tab Bar
+
+<a href="https://upfork.dev/products/fluid-tab-bar-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/fluid-tab-bar-react-native-dark.webp">
+    <img alt="Fluid Tab Bar: a social app's feed above a floating tab bar, its dark pill behind the Home icon" src=".github/previews/fluid-tab-bar-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A floating bottom tab bar whose highlight moves like a drop of liquid: its leading edge darts to the tab you pick,
+the other follows, and the pill stretches, thins and settles. Icons light up as it passes, badges pop, and in
+`expand` the focused tab opens to show its label.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/fluid-tab-bar-react-native) · [Source, demo app and docs](fluid-tab-bar)
+
+### Swipe Deck
+
+<a href="https://upfork.dev/products/swipe-deck-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/swipe-deck-react-native-dark.webp">
+    <img alt="Swipe Deck: an album cover on top of a stack of cards, with skip, playlist and save buttons under it" src=".github/previews/swipe-deck-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A card stack to swipe left, right or up. The card follows your finger and tilts, a stamp in your color says what
+letting go will do, the next card rises underneath, buttons swipe for you and the last card comes back with undo.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-gesture-handler expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/swipe-deck-react-native) · [Source, demo app and docs](swipe-deck)
+
+### Goal Ring
+
+<a href="https://upfork.dev/products/skia-progress-ring-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/skia-progress-ring-react-native-dark.webp">
+    <img alt="Goal Ring: a steps screen with a green gradient ring at 7,420 of 10,000 steps" src=".github/previews/skia-progress-ring-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A progress ring drawn with Skia: a gradient arc with a soft glow, a dot riding its end and your content in the
+middle. Animate it, drive it with a shared value, or let people drag round it to set a goal.
+
+```bash
+npx expo install @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/skia-progress-ring-react-native) · [Source, demo app and docs](goal-ring)
+
+### Slide to Confirm
+
+<a href="https://upfork.dev/products/slide-to-confirm-react-native">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/slide-to-confirm-react-native-dark.webp">
+    <img alt="Slide to Confirm: a checkout screen ending in a slide-to-pay button" src=".github/previews/slide-to-confirm-react-native-light.webp" width="280">
+  </picture>
+</a>
+
+A slide-to-confirm button for payments, transfers and unlocks: drag to the end, see a spinner while your action
+runs, then a done state, or an error you can retry. Haptics on phones, any tint.
+
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-gesture-handler react-native-svg expo-haptics
+```
+
+[Live preview](https://upfork.dev/products/slide-to-confirm-react-native) · [Source, demo app and docs](slide-to-confirm)
+
 ## Running a demo
 
 The React components come with a small Next.js demo:
@@ -133,10 +218,21 @@ pnpm dev
 Then open the address in its README (for Crowdwall, <http://localhost:3000/demo/community-hero>). The HTML
 sections need nothing: open `index.html` in a browser. `pnpm build` in their folder rebuilds it from `src/`.
 
+The React Native components are Expo apps:
+
+```bash
+cd fluid-tab-bar
+npm install
+npx expo start
+```
+
+Press `w` for the browser, or scan the QR code with Expo Go. The bar at the top of the app switches between the
+demos and the theme.
+
 ## More from UpFork
 
-[upfork.dev](https://upfork.dev) has more: 3D and WebGL heroes, carousels and complete landing pages, each with a
-live preview. Most of them come with the Pro plan. AI assistants (Claude, Cursor, VS Code) can search UpFork and
+[upfork.dev](https://upfork.dev) has more: 3D and WebGL heroes, carousels, complete landing pages and
+[React Native components](https://upfork.dev/mobile), each with a live preview. Most of them come with the Pro plan. AI assistants (Claude, Cursor, VS Code) can search UpFork and
 install components through its [MCP server](https://upfork.dev/docs/mcp).
 
 Found a bug in one of these? [Open an issue](../../issues).
@@ -145,4 +241,5 @@ Found a bug in one of these? [Open an issue](../../issues).
 
 The code is [MIT](LICENSE). The demo photos are from Unsplash, under the Unsplash License (credited in each folder's
 `PHOTOS.md` or README); the Geist font is under the SIL Open Font License; Lucide icons are under the ISC License. Replace the
-demo photos with your own before you launch: the people pictured don't endorse your product.
+demo photos with your own before you launch: the people pictured don't endorse your product. The React Native demos
+have no photos: their covers, landscapes and icons are drawn in code, and the names in them are made up.

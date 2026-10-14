@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Slide to Confirm",
+    "slug": "slide-to-confirm",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}
