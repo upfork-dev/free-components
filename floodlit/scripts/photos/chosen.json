@@ -1,0 +1,59 @@
+{
+ "shoes": [
+  {
+   "id": "red-high",
+   "order": 1,
+   "kind": "photo"
+  },
+  {
+   "id": "court-panel",
+   "order": 2,
+   "kind": "photo"
+  },
+  {
+   "id": "white-trainer",
+   "order": 3,
+   "kind": "photo"
+  },
+  {
+   "id": "mesh-runner",
+   "order": 4,
+   "kind": "photo"
+  },
+  {
+   "id": "black-lace",
+   "order": 5,
+   "kind": "photo"
+  },
+  {
+   "id": "cobalt-runner",
+   "order": 6,
+   "kind": "ai",
+   "tool": "Grok"
+  },
+  {
+   "id": "neon-racer",
+   "order": 7,
+   "kind": "ai",
+   "tool": "Grok"
+  },
+  {
+   "id": "olive-trail",
+   "order": 8,
+   "kind": "ai",
+   "tool": "Grok"
+  },
+  {
+   "id": "lagoon-low",
+   "order": 9,
+   "kind": "ai",
+   "tool": "Grok"
+  },
+  {
+   "id": "slate-gym",
+   "order": 10,
+   "kind": "ai",
+   "tool": "ChatGPT"
+  }
+ ]
+}

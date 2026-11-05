@@ -1,0 +1,7 @@
+pillow
+numpy
+scipy
+opencv-python-headless
+pymatting
+# Only for "method": "birefnet". Its model is a 973 MB download.
+rembg[cpu]

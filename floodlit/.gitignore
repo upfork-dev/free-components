@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+dist
+.env*
+*.log
+# Your source photographs and working files stay on your machine
+photos-source/
+photos-work/
+__pycache__/
+tsconfig.tsbuildinfo
+next-env.d.ts
+AGENTS.md

@@ -1,0 +1,40 @@
+{
+  "name": "floodlit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A 3D night showroom for sneaker and shoe stores in React and raw WebGL2: pairs stand on lit acrylic shelves, the camera walks up to the shoe you click, and sizes, add to bag and the bag live in the room. No three.js.",
+  "keywords": [
+    "ecommerce",
+    "shoe-store",
+    "sneakers",
+    "3d",
+    "webgl",
+    "webgl2",
+    "product-gallery",
+    "showroom",
+    "react",
+    "nextjs",
+    "component"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "glsl": "node scripts/glsl.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "next": "16.4.3",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@12.8.1"
+}

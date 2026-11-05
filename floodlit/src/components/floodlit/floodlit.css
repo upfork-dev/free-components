@@ -1,0 +1,1144 @@
+/* Floodlit. Plain CSS, all tokens under --fl-. Installed files load no fonts: they read the two font tokens. */
+.fl-root {
+  --fl-font-display: var(--font-floodlit-display, "Archivo Variable", "Archivo", ui-sans-serif, system-ui, sans-serif);
+  --fl-font-text: var(--font-floodlit-text, "Archivo Variable", "Archivo", ui-sans-serif, system-ui, sans-serif);
+  --fl-wall: #141316;
+  --fl-ink: #f3f1ec;
+  --fl-muted: #c8c5bf;
+  --fl-line: rgb(243 241 236 / 0.46);
+  --fl-tile: rgb(243 241 236 / 0.08);
+  --fl-glass: rgb(22 21 25 / 0.94);
+  --fl-sheet: #18171b;
+  --fl-glass-edge: rgb(243 241 236 / 0.14);
+  --fl-ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  container: fl / inline-size;
+  position: relative;
+  width: 100%;
+  background: var(--fl-wall);
+  color: var(--fl-ink);
+  font-family: var(--fl-font-text);
+  isolation: isolate;
+  transition: background-color 0.7s ease, color 0.7s ease;
+}
+/* The same maths as layout.ts, in CSS, so the server's markup lands exactly where the room will draw. A container
+   cannot query itself (L-WN64), so everything hangs off .fl-body, its child. */
+.fl-body {
+  --cols: var(--n-lg);
+  --rows: var(--rows-lg);
+  --edge: max(16px, 4cqw);
+  --gap: max(10px, 1.2cqw);
+  --w: min(calc((100cqw - 2 * var(--edge) - var(--gap) * (var(--cols) - 1)) / var(--cols)), 340px);
+  --left: calc((100cqw - (var(--w) * var(--cols) + var(--gap) * (var(--cols) - 1))) / 2);
+  --head: max(96px, calc(var(--w) * 0.62));
+  --pitch: calc(var(--w) * 1.24 + 8px);
+  --first: calc(var(--head) + var(--w) * 0.62);
+  --H: calc(var(--first) + (var(--rows) - 1) * var(--pitch) + 8px + var(--w) * 0.34);
+  position: relative;
+  height: 100svh;
+  min-height: 520px;
+  overflow: clip;
+}
+.fl-slot {
+  --col: var(--c-lg);
+  --row: var(--r-lg);
+  --off: var(--o-lg);
+}
+@container fl (max-width: 1099.98px) {
+  .fl-body {
+    --cols: var(--n-md);
+    --rows: var(--rows-md);
+  }
+  .fl-slot {
+    --col: var(--c-md);
+    --row: var(--r-md);
+    --off: var(--o-md);
+  }
+}
+@container fl (max-width: 699.98px) {
+  .fl-body {
+    --cols: var(--n-sm);
+    --rows: var(--rows-sm);
+    height: auto;
+    min-height: 100svh;
+  }
+  .fl-slot {
+    --col: var(--c-sm);
+    --row: var(--r-sm);
+    --off: var(--o-sm);
+  }
+}
+@media (scripting: none) {
+  .fl-body {
+    height: auto;
+    min-height: max(var(--H), 100svh);
+  }
+}
+.fl-stick {
+  position: absolute;
+  inset: 0;
+}
+@container fl (max-width: 699.98px) {
+  .fl-stick {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    height: 100svh;
+    margin-bottom: -100svh;
+  }
+}
+/* Above the shoes' links while a dialog is open. */
+.fl-body[data-focus] .fl-stick,
+.fl-body[data-bag] .fl-stick {
+  z-index: 4;
+}
+@media (prefers-color-scheme: light) {
+  html:not(.dark) .fl-root[data-fl-theme="auto"] {
+    --fl-wall: #dedad1;
+    --fl-ink: #17161a;
+    --fl-muted: #34322f;
+    --fl-line: rgb(23 22 26 / 0.6);
+    --fl-tile: rgb(23 22 26 / 0.07);
+    --fl-glass: rgb(233 229 221 / 0.95);
+    --fl-sheet: #e9e5dd;
+    --fl-glass-edge: rgb(23 22 26 / 0.14);
+  }
+}
+html.light .fl-root[data-fl-theme="auto"],
+.fl-root[data-fl-theme="day"] {
+  --fl-wall: #dedad1;
+  --fl-ink: #17161a;
+  --fl-muted: #34322f;
+  --fl-line: rgb(23 22 26 / 0.6);
+  --fl-tile: rgb(23 22 26 / 0.07);
+  --fl-glass: rgb(233 229 221 / 0.95);
+  --fl-sheet: #e9e5dd;
+  --fl-glass-edge: rgb(23 22 26 / 0.14);
+}
+.fl-root *,
+.fl-root *::before,
+.fl-root *::after {
+  box-sizing: border-box;
+}
+
+.fl-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.fl-body[data-gl="ready"] .fl-canvas {
+  opacity: 1;
+}
+
+/* The heading, the links and the captions step away as the camera walks in. */
+.fl-plane {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: calc(var(--fl-detail-top, 0px) + (100% - var(--fl-detail-top, 0px) - var(--H)) / 2);
+  height: var(--H);
+  transform: scale(calc(1 / var(--fl-step, 1)));
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+.fl-body[data-focus] .fl-plane {
+  opacity: 0;
+}
+@container fl (max-width: 699.98px) {
+  .fl-plane {
+    position: relative;
+    top: 0;
+    margin-top: var(--fl-detail-top, 0px);
+    transform: none;
+  }
+  .fl-caption {
+    flex-direction: column;
+    gap: 1px;
+  }
+}
+@media (scripting: none) {
+  .fl-plane {
+    position: relative;
+    top: 0;
+    margin-top: var(--fl-detail-top, 0px);
+    transform: none;
+  }
+}
+
+.fl-heading {
+  position: absolute;
+  z-index: 2;
+  inset-inline-start: max(var(--edge), var(--left));
+  top: calc(var(--head) * 0.1);
+}
+.fl-eyebrow {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fl-muted);
+}
+.fl-h1 {
+  margin: 0;
+  font-family: var(--fl-font-display);
+  font-weight: 620;
+  font-stretch: 112%;
+  font-size: clamp(28px, 3.1cqw, 58px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+}
+
+.fl-wall {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fl-link {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+.fl-card {
+  position: absolute;
+  display: block;
+  left: calc(var(--left) + (var(--col) + var(--off)) * (var(--w) + var(--gap)));
+  top: calc(var(--first) + var(--row) * var(--pitch) - var(--w) / var(--aspect) * var(--baseline));
+  width: var(--w);
+  height: calc(var(--w) / var(--aspect));
+  pointer-events: auto;
+  cursor: pointer;
+}
+.fl-shelf {
+  position: absolute;
+  left: calc(var(--left) + (var(--col) + var(--off)) * (var(--w) + var(--gap)) + var(--w) * 0.015);
+  top: calc(var(--first) + var(--row) * var(--pitch));
+  width: calc(var(--w) * 0.97);
+  height: 8px;
+  border-radius: 1px;
+  background: var(--fl-tile);
+  border: 1px solid var(--fl-line);
+  transition: opacity 0.3s ease, box-shadow 0.18s ease;
+}
+.fl-body[data-gl="ready"] .fl-shelf {
+  opacity: 0;
+}
+.fl-body[data-gl="none"] .fl-link:hover .fl-shelf,
+.fl-body[data-gl="none"] .fl-link:focus-visible .fl-shelf {
+  background: var(--led);
+  box-shadow: 0 8px 26px var(--led);
+}
+.fl-poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* With scripts off a failed picture can still only show its name, never as broken text over the wall. */
+  color: transparent;
+  transition: opacity 0.3s ease;
+}
+.fl-poster[data-error] {
+  visibility: hidden;
+}
+.fl-body[data-gl="ready"] .fl-poster {
+  opacity: 0.001;
+}
+[dir="rtl"] .fl-poster {
+  transform: scaleX(-1);
+}
+.fl-caption {
+  position: absolute;
+  /* The slab's front edge stands forward of the shoes' plane, so it lands a little further from the middle: about
+     12.6 px at the row's ends, at any width where the focal length follows the width. */
+  --p: calc((var(--col) + var(--off) + 0.5) / var(--cols) * 2 - 1);
+  left: calc(var(--left) + (var(--col) + var(--off)) * (var(--w) + var(--gap)) + var(--w) * 0.015 + var(--p) * 12.6px + 2px);
+  top: calc(var(--first) + var(--row) * var(--pitch) + 8px + 14px);
+  width: calc(var(--w) * 0.97 - 4px);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--fl-muted);
+  font-variant-numeric: tabular-nums;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.fl-link:hover .fl-caption,
+.fl-link:focus-visible .fl-caption {
+  color: var(--fl-ink);
+}
+.fl-link:focus-visible .fl-caption {
+  outline: 2px solid var(--fl-ink);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+.fl-caption-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fl-hint {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--fl-muted);
+  pointer-events: none;
+}
+.fl-hint-touch {
+  display: none;
+}
+@media (scripting: none) {
+  .fl-hint {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .fl-hint-fine {
+    display: none;
+  }
+  .fl-hint-touch {
+    display: inline;
+  }
+}
+
+/* Focus: title on one side, buying on the other. The path is clear before any of it enters. */
+.fl-focus {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.fl-stage-top {
+  position: absolute;
+  top: calc(var(--fl-detail-top, 0px) + clamp(12px, 3vh, 28px));
+  inset-inline-start: max(16px, 4%);
+  inset-inline-end: calc(var(--fl-panel-w, 34%) + 24px);
+  pointer-events: none;
+}
+.fl-rise,
+.fl-back {
+  opacity: 0.001;
+  transform: var(--fl-from, translate3d(0, 10px, 0));
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+.fl-focus[data-show] .fl-rise,
+.fl-focus[data-show] .fl-back {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.32s ease calc(var(--i, 0) * 60ms), transform 0.42s var(--fl-ease) calc(var(--i, 0) * 60ms);
+}
+/* Walking along, the words slide in the direction of travel. */
+.fl-focus[data-along] .fl-panel,
+.fl-focus[data-along] .fl-title {
+  --fl-from: translate3d(calc(14px * var(--fl-travel, 1)), 0, 0);
+}
+/* When the bag opens the page steps back with the room, so nothing shows through the glass. */
+.fl-focus {
+  transition: opacity 0.32s ease;
+}
+.fl-body[data-bag] .fl-focus {
+  opacity: 0.32;
+}
+.fl-body[data-bag] .fl-panel {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.fl-panel {
+  transition: opacity 0.2s ease;
+}
+.fl-back {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px 0 8px;
+  margin-inline-start: -8px;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  color: var(--fl-ink);
+  font: 500 15px/1 var(--fl-font-text);
+  cursor: pointer;
+}
+.fl-back:hover {
+  background: var(--fl-tile);
+}
+.fl-back svg,
+.fl-icon-button svg,
+.fl-stepper svg {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fl-title {
+  margin: 6px 0 0;
+  font-family: var(--fl-font-display);
+  font-weight: 640;
+  font-stretch: 118%;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.fl-title[data-wrap] {
+  white-space: normal;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.fl-title-mark {
+  display: inline-block;
+  width: 0.34em;
+  height: 0.08em;
+  margin-inline-end: 0.22em;
+  vertical-align: 0.26em;
+  border-radius: 9em;
+  background: var(--fl-led);
+}
+.fl-stage-foot {
+  position: absolute;
+  bottom: clamp(10px, 3vh, 26px);
+  inset-inline-start: max(16px, 4%);
+  inset-inline-end: calc(var(--fl-panel-w, 34%) + 24px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: auto;
+}
+.fl-icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid var(--fl-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fl-ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.fl-icon-button:hover {
+  background: var(--fl-tile);
+}
+[dir="rtl"] .fl-stage-foot .fl-icon-button svg {
+  transform: scaleX(-1);
+}
+.fl-views {
+  display: flex;
+  gap: 4px;
+}
+.fl-views-gap {
+  flex: 1;
+}
+.fl-view {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  color: var(--fl-muted);
+  font: 500 14px/1 var(--fl-font-text);
+  cursor: pointer;
+}
+.fl-view[aria-pressed="true"] {
+  color: var(--fl-ink);
+  background: var(--fl-tile);
+}
+
+.fl-panel {
+  position: absolute;
+  top: var(--fl-detail-top, 0px);
+  bottom: 0;
+  inset-inline-end: 0;
+  width: var(--fl-panel-w, 34%);
+  padding-block: clamp(14px, 4vh, 44px) clamp(14px, 3vh, 28px);
+  padding-inline: 28px max(16px, 3.4%, calc(var(--fl-panel-w, 34%) - 508px));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+.fl-series {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fl-muted);
+}
+.fl-price {
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: clamp(20px, 1.9vw, 26px);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.fl-price s {
+  font-size: 0.68em;
+  font-weight: 500;
+  color: var(--fl-muted);
+}
+.fl-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fl-muted);
+}
+.fl-size-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  min-height: 28px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.fl-your-size {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--fl-muted);
+}
+.fl-units {
+  display: inline-flex;
+  gap: 2px;
+}
+.fl-units button {
+  min-width: 36px;
+  min-height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fl-muted);
+  font: 500 13px/1 var(--fl-font-text);
+  cursor: pointer;
+}
+.fl-units button[aria-pressed="true"] {
+  color: var(--fl-ink);
+  background: var(--fl-tile);
+}
+
+.fl-tiles {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.fl-tile {
+  position: relative;
+  min-height: 42px;
+  padding: 0 2px;
+  border: 1px solid var(--fl-line);
+  border-radius: 8px;
+  background: var(--fl-tile);
+  color: var(--fl-ink);
+  font: 500 14px/1 var(--fl-font-text);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+.fl-tile:hover:not([data-out]):not([data-on]) {
+  border-color: var(--fl-ink);
+}
+/* The ring is the room's own ink: a shoe's colour may be close to the wall behind it. */
+.fl-tile[data-on] {
+  background: var(--fl-led);
+  border-color: var(--fl-ink);
+  box-shadow: inset 0 0 0 1px var(--fl-ink);
+  color: var(--fl-led-ink);
+  font-weight: 650;
+}
+.fl-tile[data-out] {
+  color: var(--fl-muted);
+  background: transparent;
+  cursor: not-allowed;
+}
+.fl-tile-strike {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: var(--fl-muted);
+  stroke-width: 1;
+  pointer-events: none;
+}
+.fl-tile:focus-visible,
+.fl-back:focus-visible,
+.fl-icon-button:focus-visible,
+.fl-view:focus-visible,
+.fl-units button:focus-visible,
+.fl-pill:focus-visible,
+.fl-text-button:focus-visible,
+.fl-checkout:focus-visible,
+.fl-stepper button:focus-visible,
+.fl-details summary:focus-visible {
+  outline: 2px solid var(--fl-ink);
+  outline-offset: 2px;
+}
+
+/* The pill. Fixed size. The sweep is a transform, and the text swaps in a fixed-height mask. */
+.fl-pill {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 56px;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  background: transparent;
+  color: var(--fl-ink);
+  font: 600 15px/1 var(--fl-font-text);
+  cursor: pointer;
+  transform: translateZ(0);
+}
+/* The svg is pulled in by half the stroke, so the whole line stays inside the button at any width. */
+.fl-pill-line {
+  position: absolute;
+  inset: 0.75px;
+  width: calc(100% - 1.5px);
+  height: calc(100% - 1.5px);
+  overflow: visible;
+  fill: none;
+  stroke: var(--fl-line);
+  stroke-width: 1.5;
+}
+.fl-pill-sweep {
+  position: absolute;
+  inset: 0;
+  background: var(--fl-pill-fill);
+  transform: translate3d(-104%, 0, 0);
+  border-radius: 28px;
+  /* A soft leading edge: no visible band. */
+  mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent);
+}
+.fl-pill[data-state="ready"],
+.fl-pill[data-state="another"] {
+  background: var(--fl-ink);
+  color: var(--fl-wall);
+}
+.fl-pill[data-state="ready"] .fl-pill-line,
+.fl-pill[data-state="another"] .fl-pill-line {
+  stroke: transparent;
+}
+/* The text must read on the shoe's colour, on what that colour sweeps over, and so on every blend between the two. */
+.fl-pill[data-state="adding"] {
+  background: var(--fl-pill-base);
+  color: var(--fl-pill-ink);
+  transition: background-color 0.14s linear, color 0.14s linear;
+}
+.fl-pill[data-state="adding"] .fl-pill-sweep {
+  transform: translate3d(8%, 0, 0);
+  transition: transform 0.56s cubic-bezier(0.3, 0.1, 0.2, 1);
+}
+.fl-pill[data-state="added"] {
+  background: var(--fl-pill-fill);
+  color: var(--fl-pill-ink);
+}
+.fl-pill[data-state="error"] .fl-pill-line {
+  stroke: #e0623f;
+}
+.fl-pill-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  height: 56px;
+}
+.fl-pill-label {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  transition: opacity 0.16s ease, transform 0.22s var(--fl-ease);
+}
+.fl-pill-label[data-show] {
+  opacity: 1;
+  transform: none;
+}
+.fl-pill-icon {
+  position: absolute;
+  inset-inline-end: 18px;
+  top: 18px;
+  width: 20px;
+  height: 20px;
+}
+.fl-pill-icon svg path {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fl-pill-plus {
+  transition: opacity 0.14s ease;
+}
+.fl-pill-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.36s var(--fl-ease) 0.05s;
+}
+.fl-pill[data-state="added"] .fl-pill-plus,
+.fl-pill[data-state="adding"] .fl-pill-plus,
+.fl-pill[data-state="needs-size"] .fl-pill-plus,
+.fl-pill[data-state="error"] .fl-pill-plus {
+  opacity: 0;
+}
+.fl-pill[data-state="added"] .fl-pill-check {
+  stroke-dashoffset: 0;
+}
+.fl-reserved {
+  min-height: 34px;
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  color: var(--fl-muted);
+}
+.fl-reserved[data-kind="error"] {
+  color: var(--fl-ink);
+}
+.fl-text-button {
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fl-ink);
+  font: 500 14px/1 var(--fl-font-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.fl-details {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fl-muted);
+}
+.fl-details summary {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: var(--fl-ink);
+  cursor: pointer;
+  list-style: none;
+}
+.fl-details summary::-webkit-details-marker {
+  display: none;
+}
+.fl-details summary::after {
+  content: "+";
+  margin-inline-start: 8px;
+  color: var(--fl-muted);
+}
+.fl-details[open] summary::after {
+  content: "\2212";
+}
+.fl-details p {
+  margin: 0 0 6px;
+}
+
+/* The bag: glass in the room, not a slab on it. */
+.fl-bag {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  visibility: hidden;
+  transition: visibility 0s linear 0.32s;
+  pointer-events: none;
+}
+.fl-bag[data-open] {
+  visibility: visible;
+  transition-delay: 0s;
+  pointer-events: auto;
+}
+.fl-bag-backdrop {
+  position: absolute;
+  inset: 0;
+}
+.fl-bag-panel {
+  position: absolute;
+  top: var(--fl-detail-top, 0px);
+  bottom: 0;
+  inset-inline-end: 0;
+  width: min(440px, 100%);
+  display: flex;
+  flex-direction: column;
+  background: var(--fl-glass);
+  border-inline-start: 1px solid var(--fl-glass-edge);
+  backdrop-filter: saturate(1.2);
+  transform: translate3d(104%, 0, 0);
+  transition: transform 0.32s cubic-bezier(0.5, 0, 0.75, 0.3);
+  will-change: transform;
+}
+[dir="rtl"] .fl-bag-panel {
+  transform: translate3d(-104%, 0, 0);
+}
+.fl-bag[data-open] .fl-bag-panel {
+  transform: none;
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.24, 1);
+}
+.fl-bag-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--fl-glass-edge);
+}
+.fl-bag-title {
+  margin: 0;
+  font-family: var(--fl-font-display);
+  font-size: 22px;
+  font-weight: 620;
+  font-stretch: 112%;
+}
+.fl-bag-lines {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 8px 20px;
+  overflow-y: auto;
+  list-style: none;
+}
+.fl-bag-line {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--fl-glass-edge);
+}
+.fl-bag-thumb {
+  position: relative;
+  display: block;
+  align-self: start;
+  padding-bottom: 6px;
+}
+.fl-bag-thumb::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--fl-line-led);
+  box-shadow: 0 2px 8px var(--fl-line-led);
+}
+.fl-bag-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.fl-bag-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.fl-bag-size {
+  margin: 2px 0 8px;
+  font-size: 14px;
+  color: var(--fl-muted);
+}
+.fl-bag-end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.fl-bag-price {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.fl-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--fl-line);
+  border-radius: 21px;
+}
+.fl-stepper button {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fl-ink);
+  cursor: pointer;
+}
+.fl-stepper span {
+  min-width: 24px;
+  text-align: center;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.fl-bag-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+}
+.fl-bag-empty p {
+  margin: 0;
+}
+.fl-bag-foot {
+  padding: 16px 20px max(16px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--fl-glass-edge);
+}
+.fl-bag-subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.fl-bag-subtotal strong {
+  font-size: 19px;
+  font-weight: 650;
+}
+.fl-checkout {
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-radius: 26px;
+  background: var(--fl-ink);
+  color: var(--fl-wall);
+  font: 600 15px/1 var(--fl-font-text);
+  cursor: pointer;
+}
+.fl-bag-demo {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--fl-muted);
+}
+
+.fl-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* No WebGL, or a lost context: the poster wall stays, and buying still works with a plain slide-in. */
+.fl-flat {
+  position: absolute;
+  inset-inline-start: 0;
+  top: var(--fl-detail-top, 0px);
+  bottom: 0;
+  inset-inline-end: var(--fl-panel-w, 34%);
+  container-type: size;
+  display: grid;
+  place-items: center;
+  animation: fl-slide 0.32s var(--fl-ease) both;
+}
+.fl-flat-frame {
+  position: relative;
+  width: min(78cqw, calc(62cqh * var(--aspect)));
+  aspect-ratio: var(--aspect);
+}
+.fl-flat img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+[dir="rtl"] .fl-flat img {
+  transform: scaleX(-1);
+}
+.fl-flat-shelf {
+  position: absolute;
+  left: 1.5%;
+  right: 1.5%;
+  top: calc(var(--baseline) * 100%);
+  height: 8px;
+  border-radius: 2px;
+  background: var(--fl-led);
+  box-shadow: 0 10px 34px var(--fl-led);
+}
+.fl-body[data-gl="none"] .fl-plane,
+.fl-body[data-gl="none"] .fl-canvas {
+  transition: none;
+}
+@keyframes fl-slide {
+  from {
+    opacity: 0;
+    transform: translate3d(calc(18px * var(--fl-travel, 1)), 0, 0);
+  }
+}
+
+/* Stacked, on a phone or a tablet held upright: the shoe above, the panel as a sheet below, the button held above the
+   safe area. The sheet is solid: anything see-through here shows the next row of shoes. */
+.fl-body[data-stack] .fl-stage-top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  inset-inline: var(--edge);
+  top: calc(var(--fl-detail-top, 0px) + 4px);
+}
+.fl-body[data-stack] .fl-back {
+  flex: none;
+  width: 44px;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+}
+.fl-body[data-stack] .fl-back-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.fl-body[data-stack] .fl-title {
+  margin: 0;
+  min-width: 0;
+}
+.fl-body[data-stack] .fl-stage-foot {
+  top: calc(max(50%, 100% - 440px) - 50px);
+  bottom: auto;
+  inset-inline: var(--edge);
+  gap: 6px;
+}
+.fl-body[data-stack] .fl-views {
+  gap: 2px;
+  min-width: 0;
+}
+.fl-body[data-stack] .fl-view {
+  padding: 0 clamp(5px, 2cqw, 14px);
+}
+.fl-body[data-stack] .fl-panel {
+  top: max(50%, calc(100% - 440px));
+  bottom: 0;
+  width: 100%;
+  overscroll-behavior: contain;
+  justify-content: flex-start;
+  padding: 16px var(--edge) 0;
+  background: var(--fl-sheet);
+  border-top: 1px solid var(--fl-glass-edge);
+  border-radius: 18px 18px 0 0;
+}
+.fl-body[data-stack] .fl-buy {
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, var(--fl-sheet) 14px);
+  order: 9;
+}
+.fl-body[data-stack] .fl-reserved {
+  min-height: 24px;
+}
+.fl-body[data-stack] .fl-flat {
+  inset: calc(var(--fl-detail-top, 0px) + 48px) 0 auto;
+  height: calc(max(50%, 100% - 440px) - var(--fl-detail-top, 0px) - 100px);
+}
+/* A short phone keeps what buying needs on one sheet. */
+@media (max-height: 700px) {
+  .fl-body[data-stack] .fl-desc {
+    display: none;
+  }
+  .fl-body[data-stack] .fl-panel {
+    gap: 6px;
+    padding-top: 10px;
+  }
+  .fl-body[data-stack] .fl-tile {
+    min-height: 40px;
+  }
+  .fl-body[data-stack] .fl-pill {
+    margin-top: 2px;
+  }
+  .fl-body[data-stack] .fl-reserved {
+    min-height: 18px;
+    margin-top: 2px;
+  }
+}
+@container fl (max-width: 699.98px) {
+  .fl-canvas {
+    touch-action: pan-y;
+  }
+  .fl-bag-panel {
+    width: 100%;
+  }
+  .fl-plane {
+    margin-bottom: 52px;
+  }
+  .fl-hint {
+    top: 100%;
+    bottom: auto;
+    padding-top: 22px;
+  }
+}
+
+/* Reduced motion: nothing travels. Things simply appear or fade. */
+@media (prefers-reduced-motion: reduce) {
+  .fl-rise,
+  .fl-back {
+    transform: none;
+  }
+  .fl-focus[data-show] .fl-rise,
+  .fl-focus[data-show] .fl-back {
+    transition: opacity 0.16s linear;
+  }
+  .fl-flat {
+    animation: none;
+  }
+  .fl-bag-panel,
+  [dir="rtl"] .fl-bag-panel {
+    transform: none;
+    opacity: 0;
+    transition: opacity 0.18s linear;
+  }
+  .fl-bag[data-open] .fl-bag-panel {
+    opacity: 1;
+    transition: opacity 0.18s linear;
+  }
+  .fl-pill-sweep {
+    display: none;
+  }
+  .fl-pill[data-state="adding"] {
+    background: var(--fl-pill-fill);
+  }
+  .fl-pill-check,
+  .fl-pill-label {
+    transition: none;
+  }
+}
+
+/* At full width there is no room left to see through the bag: solid, or the view under it shows as a ghost. */
+.fl-body[data-stack] .fl-bag-panel {
+  background: var(--fl-sheet);
+  border-inline-start: 0;
+}
+@container fl (max-width: 699.98px) {
+  .fl-bag-panel {
+    background: var(--fl-sheet);
+    border-inline-start: 0;
+  }
+}

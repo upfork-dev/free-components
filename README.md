@@ -1,6 +1,6 @@
 # Free React, Tailwind CSS and React Native components by UpFork
 
-Twenty-three free, MIT-licensed components from [UpFork](https://upfork.dev). Four are React components that you add
+Twenty-four free, MIT-licensed components from [UpFork](https://upfork.dev). Five are React components that you add
 to a React + Tailwind project with the shadcn CLI, with no account, token or setup. Three are sections in a single
 HTML file each, with no framework. Sixteen are React Native components for Expo apps, each a small app you can run. Every one
 has a live preview on upfork.dev, in light and dark: the web ones at phone, tablet and desktop width, the mobile ones
@@ -12,6 +12,7 @@ in a phone you use with the mouse, or with your finger on your own phone.
 | [Border Beam Button](#border-beam-button) | Pill button with a comet of light running round its border | React, shadcn CLI |
 | [Interactive SaaS Hero](#interactive-saas-hero) | Hero whose app window runs a working product demo | React, shadcn CLI |
 | [Pacewall](#pacewall) | Shoe store product grid where the shoe itself travels to its detail view | React, shadcn CLI |
+| [Floodlit](#floodlit) | 3D night showroom for a shoe store, where the camera walks up to the shoe you click | React, shadcn CLI |
 | [Aurora Glass Testimonials](#aurora-glass-testimonials) | 3D stack of glass testimonial cards | HTML + Tailwind CSS |
 | [Pulse Bento Feature Highlights](#pulse-bento-feature-highlights) | Feature cards that are small live demos | HTML + Tailwind CSS |
 | [Spotlight Bento Feature Showcase](#spotlight-bento-feature-showcase) | Feature timeline linked to a bento grid of images | HTML + Tailwind CSS |
@@ -110,6 +111,26 @@ npx shadcn@latest add https://upfork.dev/r/shoe-store-product-grid-react.json
 ```
 
 [Live preview](https://upfork.dev/products/shoe-store-product-grid-react) · [Source and docs](pacewall)
+
+### Floodlit
+
+<a href="https://upfork.dev/products/3d-shoe-showroom-webgl-react">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/floodlit-dark.webp">
+    <img alt="Floodlit: sports shoes on clear acrylic shelves against a plaster wall, each shelf lit by a strip of light" src=".github/previews/floodlit-light.webp" width="720">
+  </picture>
+</a>
+
+A 3D night showroom for sneaker and shoe stores, in raw WebGL2 with no three.js. Pairs stand on lit acrylic shelves,
+the camera walks up to the shoe you click, and sizes, add to bag and the bag live in the room. The demo's 10 shoes are
+not under MIT: five are real photographs under their own licences and five are AI-generated images, listed in its
+[PHOTOS.md](floodlit/PHOTOS.md). We have not verified those tools' terms, so check them yourself or replace the pictures.
+
+```bash
+npx shadcn@latest add https://upfork.dev/r/3d-shoe-showroom-webgl-react.json
+```
+
+[Live preview](https://upfork.dev/products/3d-shoe-showroom-webgl-react) · [Source and docs](floodlit)
 
 ## HTML sections
 
