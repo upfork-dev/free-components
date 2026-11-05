@@ -109,6 +109,7 @@ export function ShoeDetail(props: ShoeDetailProps) {
 
   /* ---------- The journey there ---------- */
   const running = useRef<Animation[]>([]);
+  const stageControls = () => (root.current ? [...root.current.querySelectorAll<HTMLElement>(".pw-back, .pw-nav, .pw-views")] : []);
 
   const resetCamera = useCallback(() => {
     setZoomed(false);
@@ -209,6 +210,10 @@ export function ShoeDetail(props: ShoeDetailProps) {
       }
     }
     if (line.current) animations.push(line.current.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, delay: 180, easing: "ease-out", fill: "both" }));
+    // The stage's own controls arrive with the panel, once the wall has gone from under them.
+    for (const control of stageControls()) {
+      animations.push(control.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduced ? 160 : 320, delay: reduced || !morph ? 0 : 260, easing: "ease-out", fill: "both" }));
+    }
     if (backdrop.current) {
       animations.push(backdrop.current.animate([{ opacity: 0 }, { opacity: 1 }], { duration: reduced || !morph || !from ? 200 : 320, easing: "ease-out", fill: "both" }));
     }
@@ -312,6 +317,9 @@ export function ShoeDetail(props: ShoeDetailProps) {
       list.push(item.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: "ease-out", fill: "both" }));
     }
     if (line.current) list.push(line.current.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: "ease-out", fill: "both" }));
+    for (const control of stageControls()) {
+      list.push(control.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: "ease-out", fill: "both" }));
+    }
     const flight = box.animate(travelFrames(a.left + a.width / 2 - (b.left + b.width / 2), a.bottom - b.bottom, a.width / b.width, true), { duration: CLOSE_MS, easing: "linear", fill: "both" });
     list.push(
       railEl.animate(
