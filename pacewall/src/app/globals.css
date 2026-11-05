@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Tailwind scans every text file: the brief and the scripts must not add classes (L-5TKJ). */
+@source not "../../scripts";
+@source not "../../photos-source";
+@source not "../../photos-work";
+@source not "../../.venv-photos";
+@source not "../../PHOTOS.md";
+@source not "../../README.md";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  background: #ecebe6;
+  -webkit-text-size-adjust: 100%;
+}
+html.dark {
+  background: #121315;
+}
+body {
+  margin: 0;
+  overflow-x: clip;
+}

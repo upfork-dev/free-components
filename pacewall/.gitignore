@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+dist
+.env*
+*.log
+# Your source photographs and the matting environment stay on your machine
+photos-source/
+photos-work/
+.venv-photos/
+__pycache__/
+tsconfig.tsbuildinfo
+next-env.d.ts

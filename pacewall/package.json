@@ -1,0 +1,44 @@
+{
+  "name": "pacewall",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A wall of sports shoes standing on slim shelves for online stores. Rearrange it, thin it out by size, and take a pair down: the shoe itself travels from its shelf into a detail view and back. React and Tailwind CSS, no animation library, light, dark and auto themes.",
+  "keywords": [
+    "ecommerce",
+    "shoes",
+    "sneakers",
+    "product-grid",
+    "shop",
+    "shared-element",
+    "flip-animation",
+    "web-animations",
+    "react",
+    "nextjs",
+    "tailwind",
+    "dark-mode",
+    "component"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@12.8.1"
+}

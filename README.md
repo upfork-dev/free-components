@@ -1,6 +1,6 @@
 # Free React, Tailwind CSS and React Native components by UpFork
 
-Twenty-two free, MIT-licensed components from [UpFork](https://upfork.dev). Three are React components that you add
+Twenty-three free, MIT-licensed components from [UpFork](https://upfork.dev). Four are React components that you add
 to a React + Tailwind project with the shadcn CLI, with no account, token or setup. Three are sections in a single
 HTML file each, with no framework. Sixteen are React Native components for Expo apps, each a small app you can run. Every one
 has a live preview on upfork.dev, in light and dark: the web ones at phone, tablet and desktop width, the mobile ones
@@ -11,6 +11,7 @@ in a phone you use with the mouse, or with your finger on your own phone.
 | [Crowdwall](#crowdwall) | Community hero over an endless wall of portraits | React, shadcn CLI |
 | [Border Beam Button](#border-beam-button) | Pill button with a comet of light running round its border | React, shadcn CLI |
 | [Interactive SaaS Hero](#interactive-saas-hero) | Hero whose app window runs a working product demo | React, shadcn CLI |
+| [Pacewall](#pacewall) | Shoe store product grid where the shoe itself travels to its detail view | React, shadcn CLI |
 | [Aurora Glass Testimonials](#aurora-glass-testimonials) | 3D stack of glass testimonial cards | HTML + Tailwind CSS |
 | [Pulse Bento Feature Highlights](#pulse-bento-feature-highlights) | Feature cards that are small live demos | HTML + Tailwind CSS |
 | [Spotlight Bento Feature Showcase](#spotlight-bento-feature-showcase) | Feature timeline linked to a bento grid of images | HTML + Tailwind CSS |
@@ -89,6 +90,26 @@ npx shadcn@latest add https://upfork.dev/r/interactive-saas-hero.json
 ```
 
 [Live preview](https://upfork.dev/products/interactive-saas-hero) · [Source and docs](interactive-saas-hero)
+
+### Pacewall
+
+<a href="https://upfork.dev/products/shoe-store-product-grid-react">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/previews/pacewall-dark.webp">
+    <img alt="Pacewall: a wall of sports shoes standing on slim shelves, each with its name and price on a ticket" src=".github/previews/pacewall-light.webp" width="720">
+  </picture>
+</a>
+
+An animated product grid for shoe and sneaker stores. Shoes stand on slim shelves, shoppers sort and filter by size,
+and the shoe itself travels into a detail view with sizes and add to bag. No animation library. The demo's 17 shoes are
+not under MIT: seven are real photographs under their own licences and ten are AI-generated images, listed in its
+[PHOTOS.md](pacewall/PHOTOS.md). We have not verified those tools' terms, so check them yourself or replace the pictures.
+
+```bash
+npx shadcn@latest add https://upfork.dev/r/shoe-store-product-grid-react.json
+```
+
+[Live preview](https://upfork.dev/products/shoe-store-product-grid-react) · [Source and docs](pacewall)
 
 ## HTML sections
 
