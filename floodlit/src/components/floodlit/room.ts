@@ -25,6 +25,8 @@ export type RoomOptions = {
   onFrame?: (info: FrameInfo) => void;
   /** The walk has reached the point where the panel may enter: the path is clear of it. */
   onPanelClear?: () => void;
+  /** Walking back, the camera is nearly home: the wall's words may come back without landing on the wrong shoes. */
+  onHome?: () => void;
   /** No walking and no torch. States change at once, and the page crossfades them. Light still answers hover. */
   reduced?: boolean;
   rtl?: boolean;
@@ -233,6 +235,12 @@ export function createRoom(engine: Engine, options: RoomOptions = {}) {
       panelFade = frameInfo.panelFade;
       goal = toGoal(frameInfo.pose);
     }
+    // A new layout ends a walk where it is, and the springs carry the camera to the new frame. A walk cut short still
+    // lets the panel in: without that word the focus view waits for a cue that never comes.
+    if (path?.mark && !path.mark.done) {
+      path.mark.done = true;
+      path.mark.run();
+    }
     path = null;
     wake();
   }
@@ -366,6 +374,7 @@ export function createRoom(engine: Engine, options: RoomOptions = {}) {
         s.amount.x = 0;
         s.level.x = 0;
       }
+      options.onHome?.();
       wake();
       return;
     }
@@ -382,6 +391,7 @@ export function createRoom(engine: Engine, options: RoomOptions = {}) {
         done: false,
         run: () => {
           shelves[index].levelTarget = 0;
+          options.onHome?.();
         },
       },
     });

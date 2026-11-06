@@ -11,6 +11,8 @@ export type RoomEvents = {
   onLost: () => void;
   onRestored: () => void;
   onPanelClear: () => void;
+  /** Walking back, nearly home. */
+  onHome: () => void;
 };
 
 export type RoomInit = {
@@ -71,6 +73,7 @@ export function startRoom(canvas: HTMLCanvasElement, init: RoomInit, events: Roo
     else if (event.type === "lost") events.onLost();
     else if (event.type === "restored") events.onRestored();
     else if (event.type === "panelClear") events.onPanelClear();
+    else if (event.type === "home") events.onHome();
   };
   const onThisThread = async () => {
     try {

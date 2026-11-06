@@ -145,7 +145,8 @@ html.light .fl-root[data-fl-theme="auto"],
   transition: opacity 0.22s ease;
   pointer-events: none;
 }
-.fl-body[data-focus] .fl-plane {
+.fl-body[data-focus] .fl-plane,
+.fl-body[data-return] .fl-plane {
   opacity: 0;
 }
 @container fl (max-width: 699.98px) {
@@ -1038,11 +1039,22 @@ html.light .fl-root[data-fl-theme="auto"],
   bottom: 0;
   width: 100%;
   overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fl-line) transparent;
   justify-content: flex-start;
   padding: 16px var(--edge) 0;
   background: var(--fl-sheet);
   border-top: 1px solid var(--fl-glass-edge);
   border-radius: 18px 18px 0 0;
+  transition: opacity 0.3s ease, transform 0.42s var(--fl-ease);
+}
+/* The sheet comes up with what is on it: an empty dark block must never wait under a camera that is still walking.
+   Walking along, it stays, and only its words change. */
+.fl-body[data-stack] .fl-focus:not([data-show]):not([data-along]) .fl-panel {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.16s ease, transform 0.16s ease;
 }
 .fl-body[data-stack] .fl-buy {
   position: sticky;
@@ -1079,8 +1091,13 @@ html.light .fl-root[data-fl-theme="auto"],
     margin-top: 2px;
   }
 }
+/* In focus the room's gestures are its own: a drag down steps back, sideways walks along. Left to the browser, a
+   drag down on a page that cannot scroll is a pull-to-refresh, and a swipe may end in a touchcancel. */
+.fl-body[data-focus] .fl-canvas {
+  touch-action: none;
+}
 @container fl (max-width: 699.98px) {
-  .fl-canvas {
+  .fl-body:not([data-focus]) .fl-canvas {
     touch-action: pan-y;
   }
   .fl-bag-panel {
@@ -1104,6 +1121,11 @@ html.light .fl-root[data-fl-theme="auto"],
   }
   .fl-focus[data-show] .fl-rise,
   .fl-focus[data-show] .fl-back {
+    transition: opacity 0.16s linear;
+  }
+  .fl-body[data-stack] .fl-panel,
+  .fl-body[data-stack] .fl-focus:not([data-show]):not([data-along]) .fl-panel {
+    transform: none;
     transition: opacity 0.16s linear;
   }
   .fl-flat {

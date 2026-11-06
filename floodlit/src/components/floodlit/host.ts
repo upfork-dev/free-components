@@ -16,7 +16,7 @@ export type HostInit = {
 };
 
 export type HostEvent =
-  | { type: "ready" | "fail" | "lost" | "restored" | "panelClear" }
+  | { type: "ready" | "fail" | "lost" | "restored" | "panelClear" | "home" }
   | { type: "stats"; stats: ReturnType<Engine["stats"]> & { thread: string; frames: number; frameMs: number[] } };
 
 export type HostMethod =
@@ -72,6 +72,7 @@ export function createHost(canvas: HTMLCanvasElement | OffscreenCanvas, init: Ho
       detailTop: init.detailTop,
       small: init.small,
       onPanelClear: () => emit({ type: "panelClear" }),
+      onHome: () => emit({ type: "home" }),
       onFrame: (info) => {
         frames++;
         if (info.moving && frameMs.length < 4000) frameMs.push(info.dt);

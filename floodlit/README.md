@@ -88,9 +88,10 @@ Checked on one laptop with an Intel Iris Plus, in installed Chrome, on a product
 - No sideways scroll at ten sizes from 320 px to 3440×1440.
 - Text measured against the lit pixels actually behind it, in 67 states and both themes: all at least 4.5:1. Controls at least 3:1. axe: no violations.
 - Zero draw calls at rest, and none in a hidden tab. A walk up takes about 1.1 s.
+- Phone and tablet sizes on the move, with mouse and with touch: opening, walking along, swipes, the bag, closing, scrolling. Also a computer's view of a phone-width frame, with real scrollbars, and a frame resized in mid-walk.
 - 26.5 KB of JavaScript, gzipped, without React. 863 KB of pictures for the first view at 1440×900. About 80 MB of GPU textures on a desktop, 30 MB at phone size.
 
-**Frame times were not measured on a quiet machine**: the laptop was busy with other work throughout, so no frame-rate figure is given here. Not tested on a real phone, a real tablet, Safari or Firefox, or with a real screen reader. Phone results are Chrome's emulation, with real touch events.
+**Frame times were not measured on a quiet machine**: the laptop was busy with other work throughout, so no frame-rate figure is given here. Not tested on a real phone, a real tablet, Safari or Firefox, or with a real screen reader. Phone results are Chrome's emulation, with touch events sent through DevTools.
 
 ## Shaders
 

@@ -88,6 +88,21 @@ function rectThrough(layout: WallLayout, focusIndex: number, index: number, W: n
   return { x0: sx(slot.card.x), y0: sy(slot.card.y), x1: sx(slot.card.x + slot.card.w), y1: sy(slot.slab.y + 18), panelLeft: frame.panelLeft * W };
 }
 
+/** Calls `then` after `ms` of the page being visible: hidden, the clock stops and starts again on return. */
+function whileVisible(ms: number, then: () => void): () => void {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const arm = () => {
+    clearTimeout(timer);
+    if (document.visibilityState !== "hidden") timer = setTimeout(then, ms);
+  };
+  arm();
+  document.addEventListener("visibilitychange", arm);
+  return () => {
+    clearTimeout(timer);
+    document.removeEventListener("visibilitychange", arm);
+  };
+}
+
 function hostIsDark(): boolean {
   const html = document.documentElement.classList;
   if (html.contains("dark")) return true;
@@ -123,6 +138,8 @@ export function Floodlit(props: FloodlitProps) {
   const [gl, setGl] = useState<"waiting" | "ready" | "none">("waiting");
   const [focusIndex, setFocusIndex] = useState(-1);
   const [panelShown, setPanelShown] = useState(false);
+  // Walking back to the wall: its words wait until the camera is nearly home, or they float over the wrong shoes.
+  const [returning, setReturning] = useState(false);
   const [travel, setTravel] = useState(1);
   const [along, setAlong] = useState(false);
   const [unit, setUnit] = useState<SizeUnit>("eu");
@@ -266,6 +283,7 @@ export function Floodlit(props: FloodlitProps) {
       },
       onRestored: () => setGl("ready"),
       onPanelClear: () => setPanelShown(true),
+      onHome: () => setReturning(false),
     });
     // Shoes and colours are read once: a new set of shoes means a new canvas, by key.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -290,16 +308,37 @@ export function Floodlit(props: FloodlitProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [tall, gl, size.h]);
 
-  // While a shoe is open on a phone, the page behind stays still.
+  // While a shoe is open on a phone, the page behind stays still. Where the page has a classic scrollbar (a computer,
+  // or the site's preview at phone width on one), locking it would take the scrollbar away and make the page wider:
+  // the room would lay out again in mid-walk. So its gutter stays.
   useEffect(() => {
     if (!tall || focusIndex < 0) return;
     const html = document.documentElement;
-    const before = html.style.overflow;
+    const before = { overflow: html.style.overflow, gutter: html.style.scrollbarGutter, overscroll: html.style.overscrollBehavior };
+    const bar = window.innerWidth - html.clientWidth;
     html.style.overflow = "hidden";
+    // A drag down steps back here; on a page that cannot scroll it would otherwise be a pull-to-refresh.
+    html.style.overscrollBehavior = "none";
+    if (bar > 0) html.style.scrollbarGutter = "stable";
     return () => {
-      html.style.overflow = before;
+      html.style.overflow = before.overflow;
+      html.style.scrollbarGutter = before.gutter;
+      html.style.overscrollBehavior = before.overscroll;
     };
   }, [tall, focusIndex]);
+
+  // The room says when the panel may come in. If that word never comes (a room that stopped, frames that never
+  // arrive), the panel comes in anyway: a view with nothing to press is worse than a panel over a shoe still settling.
+  // It counts only while the page is visible: in a hidden tab the walk is paused, not lost.
+  useEffect(() => {
+    if (focusIndex < 0 || panelShown) return;
+    return whileVisible(1800, () => setPanelShown(true));
+  }, [focusIndex, panelShown]);
+  // The same for the wall's words on the way back.
+  useEffect(() => {
+    if (!returning) return;
+    return whileVisible(1500, () => setReturning(false));
+  }, [returning]);
 
   const resetBuying = useCallback(
     (shoe: Shoe) => {
@@ -370,13 +409,14 @@ export function Floodlit(props: FloodlitProps) {
       crossfade();
       setPanelShown(false);
       setFocusIndex(-1);
+      setReturning(Boolean(roomRef.current) && gl === "ready" && !reducedRef.current);
       roomRef.current?.close();
       if (!fromHistory) writeUrl(null);
       onOpenChange?.(null);
       // Focus returns to the shoe that was open, once the wall is no longer inert.
       returnFocusTo.current = i;
     },
-    [focusIndex, writeUrl, onOpenChange, crossfade],
+    [focusIndex, writeUrl, onOpenChange, crossfade, gl],
   );
 
   // A deep link, or a reload: open straight in focus, with no walk. Read after mount, so server markup stays stable.
@@ -531,7 +571,8 @@ export function Floodlit(props: FloodlitProps) {
       return;
     }
     const t = e.touches[0];
-    touchStart.current = { x: t.clientX, y: t.clientY, t: performance.now() };
+    // The events' own clocks: a busy thread runs these handlers late, but the finger's timing is in timeStamp.
+    touchStart.current = { x: t.clientX, y: t.clientY, t: e.timeStamp };
   };
   const onTouchEnd = (e: React.TouchEvent) => {
     const from = touchStart.current;
@@ -540,7 +581,7 @@ export function Floodlit(props: FloodlitProps) {
     const t = e.changedTouches[0];
     const dx = t.clientX - from.x;
     const dy = t.clientY - from.y;
-    if (performance.now() - from.t > 700) return;
+    if (e.timeStamp - from.t > 700) return;
     if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.4) walk(dx < 0 !== rtl);
     else if (dy > 70 && dy > Math.abs(dx) * 1.4) closeShoe();
   };
@@ -663,7 +704,7 @@ export function Floodlit(props: FloodlitProps) {
 
   return (
     <section className={`fl-root ${className ?? ""}`} aria-label={labels.room} data-fl-theme={themeName} dir={dir}>
-      <div ref={bodyRef} className="fl-body" data-stack={stacked || undefined} data-focus={focusIndex >= 0 || undefined} data-bag={bagOpen || undefined} data-gl={gl} style={bodyStyle} onPointerMove={onPointerMove} onPointerLeave={() => roomRef.current?.pointerLeft()} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div ref={bodyRef} className="fl-body" data-stack={stacked || undefined} data-focus={focusIndex >= 0 || undefined} data-bag={bagOpen || undefined} data-return={(returning && focusIndex < 0) || undefined} data-gl={gl} style={bodyStyle} onPointerMove={onPointerMove} onPointerLeave={() => roomRef.current?.pointerLeft()} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <div ref={stickRef} className="fl-stick">
           <canvas ref={canvasRef} className="fl-canvas" onClick={onCanvasClick} aria-hidden="true" />
 
